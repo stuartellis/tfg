@@ -1,0 +1,43 @@
+# SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
+#
+# SPDX-License-Identifier: MIT
+#
+# Tasks for Python virtualenvs with uv for the Task runner:
+#
+# https://github.com/astral-sh/uv
+
+version: "3"
+
+silent: true
+
+tasks:
+  compile:
+    desc: Compile requirements file
+    dir: "{{.USER_WORKING_DIR}}"
+    cmds:
+      - uv pip compile --generate-hashes -o requirements-dev.txt -q requirements-dev.in
+
+  create:
+    desc: Create Python virtual environment
+    dir: "{{.USER_WORKING_DIR}}"
+    cmds:
+      - uv venv -q .venv
+
+  delete:
+    desc: Delete Python virtual environment
+    dir: "{{.USER_WORKING_DIR}}"
+    cmds:
+      - rm -fr .venv
+
+  editable:
+    desc: Install as editable to Python virtual environment
+    dir: "{{.USER_WORKING_DIR}}"
+    cmds:
+      - uv pip install -e .
+
+  sync:
+    desc: Sync virtual environment with requirements
+    dir: "{{.USER_WORKING_DIR}}"
+    deps: [create]
+    cmds:
+      - uv pip sync requirements-dev.txt

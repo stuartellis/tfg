@@ -13,6 +13,7 @@ silent: true
 includes:
   pre-commit: tasks/pre-commit
   project: tasks/project
+  venv: tasks/uv
 
 tasks:
   default:

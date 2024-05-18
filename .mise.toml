@@ -5,6 +5,10 @@
 [tools]
 awscli = "latest"
 opentofu = "1.7.1"
+python = "3.12.3"
 task = "3.37.2"
 trivy = "latest"
 uv = "latest"
+
+[env]
+_.python.venv = { path = ".venv", create = true }
