@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+[tools]
+awscli = "latest"
+opentofu = "1.7.1"
+task = "3.37.2"
+trivy = "latest"
+uv = "latest"

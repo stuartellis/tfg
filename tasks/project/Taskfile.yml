@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
+#
+# SPDX-License-Identifier: MIT
+#
+# Project tasks for the Task runner:
+#
+# https://taskfile.dev
+
+version: "3"
+
+silent: true
+
+tasks:
+
+  clean:
+    desc: Delete generated files
+    cmds:
+      - for: ["tmp"]
+        cmd: rm -fr {{ .ITEM }}

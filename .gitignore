@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+# Operating system files
+.DS_Store
+thumbs.db
+
+# Code editors
+.idea/
+.vscode/
+
+# Project generated directories
+.task/
+bin/
+logs/
+tmp/
+
+# MkDocs
+site/
+
+# Python
+__pycache__/
+*$py.class
+*.egg-info/
+.coverage
+.mypy_cache/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv*
