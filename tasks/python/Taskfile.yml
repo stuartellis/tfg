@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
+#
+# SPDX-License-Identifier: MIT
+#
+# Tasks for Python development with:
+#
+# - mypy
+# - pytest
+
+version: "3"
+
+silent: true
+
+tasks:
+  test:
+    desc: Run pytest
+    dir: "{{.USER_WORKING_DIR}}"
+    cmds:
+      - python3 -m pytest

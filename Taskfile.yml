@@ -13,6 +13,7 @@ silent: true
 includes:
   pre-commit: tasks/pre-commit
   project: tasks/project
+  py: tasks/python
   venv: tasks/uv
 
 tasks:
@@ -48,3 +49,8 @@ tasks:
     desc: List available tasks
     cmds:
       - task --list
+
+  test:
+    desc: Run tests
+    cmds:
+      - task: py:test
