@@ -12,6 +12,12 @@ version: "3"
 silent: true
 
 tasks:
+  clean:
+    desc: Delete generated files
+    cmds:
+      - for: ["__pycache__", ".mypy_cache", ".pytest_cache", ".ruff_cache"]
+        cmd: rm -fr {{ .ITEM }}
+
   test:
     desc: Run pytest
     dir: "{{.USER_WORKING_DIR}}"

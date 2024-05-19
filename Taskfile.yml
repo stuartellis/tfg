@@ -31,6 +31,7 @@ tasks:
     desc: Delete generated files
     cmds:
       - task: project:clean
+      - task: py:clean
 
   fmt:
     desc: Format code
