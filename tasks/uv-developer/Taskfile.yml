@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 #
-# Tasks for Python virtualenvs with uv for the Task runner:
+# Developer tasks for uv for the Task runner:
 #
 # https://github.com/astral-sh/uv
 
