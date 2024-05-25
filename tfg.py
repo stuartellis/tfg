@@ -14,12 +14,23 @@ from typing import Any
 
 VERSION = "0.1.0"
 
+SUB_COMMANDS = ["fmt", "destroy", "init", "plan", "validate"]
 
-def build_arg_parser(version: str) -> argparse.ArgumentParser:
+
+def build_arg_parser(version: str, subcommands: list[str]) -> argparse.ArgumentParser:
     """Create the parser for the command-line arguments."""
     parser = argparse.ArgumentParser(
         description="Generates commands for Terraform and OpenTofu."
     )
+    parser.add_argument(
+        "subcommand",
+        choices=subcommands,
+        help=f"subcommand to run: {" ".join(subcommands)}",
+    )
+    parser.add_argument(
+        '--debug',
+        help='output the generated context',
+        action='store_true')
     parser.add_argument(
         "-v",
         "--version",
@@ -30,20 +41,50 @@ def build_arg_parser(version: str) -> argparse.ArgumentParser:
     return parser
 
 
+def info() -> dict[str:str]:
+    """Summary of active environment."""
+    python_version = ".".join([str(v) for v in sys.version_info[slice(0, 3)]])
+
+    return {
+        "python_version": python_version,
+        "tf_exe": tf_exe_name(),
+        "tfg_version": VERSION,
+    }
+
+
 def main() -> None:
     """Run with command-line options."""
-    parser = build_arg_parser(version=VERSION)
+    parser = build_arg_parser(version=VERSION, subcommands=valid_subcommands())
     opts = vars(parser.parse_args())
     run(opts)
 
 
+def print_debug_info(options: dict[str:Any]) -> None:
+    """Output debug info."""
+    print(options)
+    print(info())
+
+
 def run(options: dict[str:Any]) -> None:
     """Run."""
-    if len(options) > 0:
-        print(options)
+    if options['debug']:
+        print_debug_info(options)
+    elif options["subcommand"]:
+        print(options["subcommand"])
     else:
         sys.stderr.write("Arguments are required")
         sys.exit(1)
+
+
+def valid_subcommands() -> list[str]:
+    """Return list of subcommands."""
+    return SUB_COMMANDS
+
+
+def tf_exe_name() -> str:
+    """Return executable for TF."""
+    return "terraform"
+
 
 """Run the main() function when this file is executed"""
 if __name__ == "__main__":

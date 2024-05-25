@@ -9,6 +9,7 @@ SPDX-License-Identifier: MIT
 import pytest
 import tfg
 
+## Tests for command-line
 
 def test_no_args(capsys: pytest.CaptureFixture[str]) -> None:
     """Exit when called with no arguments."""
@@ -16,3 +17,15 @@ def test_no_args(capsys: pytest.CaptureFixture[str]) -> None:
         tfg.run([])
     captured = capsys.readouterr()
     assert "Arguments are required" in captured.err
+
+## Tests for functions
+
+def test_info_contains_tfg_version() -> None:
+    """Info dictionary contains tfg version."""
+    info = tfg.info()
+    assert info["tfg_version"] == tfg.VERSION
+
+def test_tf_exe_is_valid() -> None:
+    """Function returns valid executable name."""
+    tf_exe_name = tfg.tf_exe_name()
+    assert tf_exe_name in ["terraform", "tofu"]
