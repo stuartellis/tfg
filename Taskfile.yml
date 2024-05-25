@@ -54,4 +54,8 @@ tasks:
   test:
     desc: Run tests
     cmds:
+      - task: pre-commit:run
+        vars: { HOOK_ID: "ruff" }
+      - task: pre-commit:run
+        vars: { HOOK_ID: "mypy" }
       - task: py:test
