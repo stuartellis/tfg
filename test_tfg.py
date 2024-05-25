@@ -15,7 +15,12 @@ import tfg
 def test_no_subcommand(capsys: pytest.CaptureFixture[str]) -> None:
     """Exit when called with no subcommand."""
     with pytest.raises(SystemExit):
-        tfg.run({"debug": False, "subcommand": None,})
+        tfg.run(
+            {
+                "debug": False,
+                "subcommand": None,
+            }
+        )
     captured = capsys.readouterr()
     assert "Arguments are required" in captured.err
 
