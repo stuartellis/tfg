@@ -14,7 +14,16 @@ from typing import Any
 
 VERSION = "0.1.0"
 
-SUB_COMMANDS = ["fmt", "destroy", "init", "plan", "validate"]
+SUB_COMMANDS = [
+    "apply",
+    "fmt",
+    "destroy",
+    "info",
+    "init",
+    "plan",
+    "status",
+    "validate",
+]
 
 
 def build_arg_parser(version: str, subcommands: list[str]) -> argparse.ArgumentParser:
@@ -28,9 +37,8 @@ def build_arg_parser(version: str, subcommands: list[str]) -> argparse.ArgumentP
         help=f"subcommand to run: {" ".join(subcommands)}",
     )
     parser.add_argument(
-        '--debug',
-        help='output the generated context',
-        action='store_true')
+        "--debug", help="output the generated context", action="store_true"
+    )
     parser.add_argument(
         "-v",
         "--version",
@@ -41,12 +49,16 @@ def build_arg_parser(version: str, subcommands: list[str]) -> argparse.ArgumentP
     return parser
 
 
-def info() -> dict[str:str]:
+def info() -> dict[str, str]:
     """Summary of active environment."""
-    python_version = ".".join([str(v) for v in sys.version_info[slice(0, 3)]])
+    python_version = [
+        sys.version_info.major,
+        sys.version_info.minor,
+        sys.version_info.micro,
+    ]
 
     return {
-        "python_version": python_version,
+        "python_version": ".".join([str(v) for v in python_version]),
         "tf_exe": tf_exe_name(),
         "tfg_version": VERSION,
     }
@@ -59,15 +71,15 @@ def main() -> None:
     run(opts)
 
 
-def print_debug_info(options: dict[str:Any]) -> None:
+def print_debug_info(options: dict[str, Any]) -> None:
     """Output debug info."""
     print(options)
     print(info())
 
 
-def run(options: dict[str:Any]) -> None:
+def run(options: dict[str, Any]) -> None:
     """Run."""
-    if options['debug']:
+    if options["debug"]:
         print_debug_info(options)
     elif options["subcommand"]:
         print(options["subcommand"])
