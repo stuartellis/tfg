@@ -6,6 +6,7 @@
 #
 # - mypy
 # - pytest
+# - ruff
 
 version: "3"
 
@@ -13,10 +14,18 @@ silent: true
 
 tasks:
   clean:
-    desc: Delete generated files
+    desc: Delete generated files in project
     cmds:
-      - for: ["__pycache__", ".mypy_cache", ".pytest_cache", ".ruff_cache"]
+      - python3 -m ruff clean -q
+      - for: ["__pycache__", ".mypy_cache", ".pytest_cache"]
         cmd: rm -fr {{ .ITEM }}
+
+  fmt:
+    desc: Run ruff formatter with import sorting
+    dir: "{{.USER_WORKING_DIR}}"
+    cmds:
+      - python3 -m ruff check --select I --fix -q
+      - python3 -m ruff format -q
 
   test:
     desc: Run pytest
