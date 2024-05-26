@@ -4,7 +4,9 @@
 #
 # Exclusions for Trivy scanner
 #
-# See https://aquasecurity.github.io/trivy
+# See:
+#
+# https://aquasecurity.github.io/trivy/v0.51/docs/configuration/filtering/#trivyignoreyaml
 
 misconfigurations:
   - id: DS002
