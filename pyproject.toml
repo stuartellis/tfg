@@ -48,57 +48,36 @@ strip_extras = true # Default behavior in future pip-tools releases
 
 [tool.ruff]
 src = ["src", "tests"]
-exclude = [
-    ".direnv",
-    ".eggs",
-    ".git",
-    ".git-rewrite",
-    ".ipynb_checkpoints",
-    ".mypy_cache",
-    ".nox",
-    ".pyenv",
-    ".pytest_cache",
-    ".pytype",
-    ".ruff_cache",
-    ".tox",
-    ".venv",
-    ".vscode",
-    "__pypackages__",
-    "_build",
-    "build",
-    "dist",
-    "node_modules",
-    "site-packages",
-    "venv",
-]
-
+target-version = "py312"
 line-length = 88
 indent-width = 4
 
-target-version = "py312"
-
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
-skip-magic-trailing-comma = false
-line-ending = "auto"
-docstring-code-format = false
-docstring-code-line-length = "dynamic"
-
 [tool.ruff.lint]
 select = ["ALL"]
-# Disable some rules for compatibility with ruff formatter:
-# https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
-ignore = ["COM812", "COM819", "D206", "D212", "D300", "E111", "E114", "E117", "ISC001", "ISC002", "Q000", "Q001", "Q002", "Q003", "T201", "W191"]
-unfixable = [
-    "T201",
-]
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-[tool.ruff.lint.per-file-ignores]
-"./test_*.py" = [
-    "S101",
+# Disable rules for compatibility with ruff formatter:
+# https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+ignore = [
+  "COM812", "COM819",
+  "D206", "D300",
+  "E111", "E114", "E117",
+  "ISC001", "ISC002",
+  "Q000", "Q001", "Q002", "Q003",
+  # T201 forbids print()
+  "T201",
+  "W191"
 ]
 
 [tool.ruff.lint.pydocstyle]
 convention = "pep257"
+
+[tool.ruff.lint.per-file-ignores]
+"./test_*.py" = [
+    # S101 forbids assert()
+    "S101",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
