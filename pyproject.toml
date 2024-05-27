@@ -10,9 +10,9 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "tfg"
 version = "0.1.0"
-description = "Generates commands for Terraform and OpenTofu"
+description = "Generates commands for Terraform"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.10"
 license = {text = "MIT"}
 keywords = []
 authors = [
@@ -22,6 +22,8 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "License :: OSI Approved :: MIT License",
   "Programming Language :: Python",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: Implementation :: CPython",
 ]
@@ -48,7 +50,7 @@ strip_extras = true # Default behavior in future pip-tools releases
 
 [tool.ruff]
 src = ["src", "tests"]
-target-version = "py312"
+target-version = "py310"
 line-length = 88
 indent-width = 4
 
@@ -81,3 +83,6 @@ convention = "pep257"
 quote-style = "double"
 indent-style = "space"
 line-ending = "auto"
+
+[tool.uv.pip]
+generate_hashes = true

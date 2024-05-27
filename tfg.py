@@ -50,7 +50,7 @@ def build_arg_parser(version: str, subcommands: list[str]) -> argparse.ArgumentP
     parser.add_argument(
         "subcommand",
         choices=subcommands,
-        help=f"subcommand to run: {" ".join(subcommands)}",
+        help=f"subcommand to run: {subcommands}",
     )
     parser.add_argument(
         "--debug", help="output the generated context", action="store_true"
@@ -103,7 +103,7 @@ def print_debug_info(options: dict[str, Any], context: dict[str, Any]) -> None:
 
 def render_cmd_string(context: dict[str, str], template: str) -> str:
     """Return string for command."""
-    return Template(template).safe_substitute(context)
+    return Template(template).substitute(context)
 
 
 def run(options: dict[str, Any]) -> None:
