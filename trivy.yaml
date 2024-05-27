@@ -176,8 +176,8 @@ license:
 list-all-pkgs: false
 misconfiguration:
     include-non-failures: false
-    policy-bundle-repository: ghcr.io/aquasecurity/trivy-policies:0
-    reset-policy-bundle: false
+    checks-bundle-repository: ghcr.io/aquasecurity/trivy-policies:0
+    reset-checks-bundle: false
     scanners:
         - dockerfile
 output: ""
