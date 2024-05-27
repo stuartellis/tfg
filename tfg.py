@@ -3,7 +3,7 @@
 """
 tfg generates commands for Terraform.
 
-It requires Python 3.11 or above. It has no other dependencies.
+It requires Python 3.10 or above. It has no other dependencies.
 
 Usage:
 
