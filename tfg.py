@@ -3,11 +3,11 @@
 """
 tfg generates commands for Terraform.
 
-It requires Python 3.10 or above. It has no other dependencies.
+This script requires Python 3.10 or above. It has no other dependencies.
 
 Usage:
 
-    ./tfg.py info
+    ./tfg.py version
 
 Help:
 
@@ -22,6 +22,8 @@ SPDX-License-Identifier: MIT
 """
 
 import argparse
+import signal
+import subprocess
 import sys
 from os import environ
 from string import Template
@@ -35,7 +37,6 @@ SUB_COMMANDS = {
     "apply": "",
     "fmt": "",
     "destroy": "",
-    "info": "",
     "init": "",
     "plan": "",
     "status": "",
@@ -53,7 +54,13 @@ def build_arg_parser(version: str, subcommands: list[str]) -> argparse.ArgumentP
         help=f"subcommand to run: {subcommands}",
     )
     parser.add_argument(
-        "--debug", help="output the generated context", action="store_true"
+        "-d", "--debug", help="output the generated context", action="store_true"
+    )
+    parser.add_argument(
+        "-p",
+        "--print",
+        help="output the command without executing it",
+        action="store_true",
     )
     parser.add_argument(
         "-v",
@@ -70,6 +77,11 @@ def build_context() -> dict[str, str]:
     exe_vars = {"tf_exe": tf_exe_name()}
     env_vars = {k.lower(): v for k, v in environ.items() if k in ENV_VARS}
     return {**exe_vars, **env_vars}
+
+
+def execute_cmd_string(cmd: str) -> subprocess.CompletedProcess:
+    """Execute the command."""
+    return subprocess.run(cmd, check=True, shell=True)  # noqa: S602
 
 
 def info() -> dict[str, str]:
@@ -116,7 +128,21 @@ def run(options: dict[str, Any]) -> None:
 
         template = SUB_COMMANDS[options["subcommand"]]
         cmd = render_cmd_string(context, template)
-        print(cmd)
+
+        if options["print"]:
+            print(cmd)
+        else:
+            try:
+                execute_cmd_string(cmd)
+            except FileNotFoundError as exc:
+                print(
+                    f"Process failed because the executable could not be found.\n{exc}"
+                )
+            except subprocess.CalledProcessError as exc:
+                print(
+                    f"Process failed because did not return a successful return code. "
+                    f"Returned {exc.returncode}\n{exc}"
+                )
     else:
         sys.stderr.write("Arguments are required")
         sys.exit(1)
