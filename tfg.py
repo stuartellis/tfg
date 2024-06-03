@@ -22,7 +22,6 @@ SPDX-License-Identifier: MIT
 """
 
 import argparse
-import signal
 import subprocess
 import sys
 from os import environ
