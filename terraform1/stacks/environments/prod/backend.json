@@ -1,0 +1,8 @@
+{
+    "aws": {
+        "bucket": "example-bucket",
+        "dynamodb_table": "example-table",
+        "region": "eu-west-2",
+        "role_arn": "arn:aws:iam::333333333333:role/example"
+    }
+}
