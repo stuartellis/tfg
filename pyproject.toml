@@ -45,7 +45,7 @@ warn_unused_ignores = true
 
 [tool.pip-tools]
 allow_unsafe = true # Default behavior in future pip-tools releases
-generate_hashes = true
+generate-hashes = true
 strip_extras = true # Default behavior in future pip-tools releases
 
 [tool.ruff]
@@ -85,4 +85,4 @@ indent-style = "space"
 line-ending = "auto"
 
 [tool.uv.pip]
-generate_hashes = true
+generate-hashes = true
