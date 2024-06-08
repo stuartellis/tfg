@@ -4,7 +4,7 @@
 #
 # Configuration for Trivy scanner
 #
-# See https://aquasecurity.github.io/trivy
+# See: https://aquasecurity.github.io/trivy
 
 cache:
     backend: fs
