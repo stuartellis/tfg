@@ -4,9 +4,9 @@
 #
 # Tasks for Python development with:
 #
-# - mypy
-# - pytest
-# - ruff
+# - mypy: https://www.mypy-lang.org
+# - pytest: https://pytest.org
+# - ruff: https://docs.astral.sh/ruff/
 
 version: "3"
 
