@@ -59,13 +59,13 @@ select = ["ALL"]
 
 # Disable rules for compatibility with ruff formatter:
 # https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+# Also disable T201, which forbids print()
 ignore = [
   "COM812", "COM819",
   "D206", "D300",
   "E111", "E114", "E117",
   "ISC001", "ISC002",
   "Q000", "Q001", "Q002", "Q003",
-  # T201 forbids print()
   "T201",
   "W191"
 ]
