@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: MIT
 #
-# Developer tasks for uv for the Task runner:
+# Developer tasks for uv for the Task runner.
 #
-# https://github.com/astral-sh/uv
+# See: https://github.com/astral-sh/uv
 
 version: "3"
 
@@ -20,7 +20,7 @@ tasks:
     desc: Compile requirements files
     dir: "{{ .USER_WORKING_DIR }}"
     cmds:
-      - uv pip compile -o {{ .PY_DEVELOPER_REQS_TXT }} --generate-hashes -q {{ .PY_DEVELOPER_REQS_IN }}
+      - uv pip compile -U -o {{ .PY_DEVELOPER_REQS_TXT }} -q {{ .PY_DEVELOPER_REQS_IN }}
 
   create:
     desc: Create Python virtual environment
@@ -43,6 +43,6 @@ tasks:
   sync:
     desc: Sync virtual environment with {{ .PY_DEVELOPER_REQS_TXT }}
     dir: "{{ .USER_WORKING_DIR }}"
-    deps: [create, compile]
+    deps: [compile]
     cmds:
       - uv pip sync {{ .PY_DEVELOPER_REQS_TXT }}
