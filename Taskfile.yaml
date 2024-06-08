@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: MIT
 #
-# Tasks for the Task runner:
+# Configuration for the Task runner
 #
-# https://taskfile.dev
+# See: https://taskfile.dev
 
 version: "3"
 
