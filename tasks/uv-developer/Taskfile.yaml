@@ -43,6 +43,5 @@ tasks:
   sync:
     desc: Sync virtual environment with {{ .PY_DEVELOPER_REQS_TXT }}
     dir: "{{ .USER_WORKING_DIR }}"
-    deps: [compile]
     cmds:
       - uv pip sync {{ .PY_DEVELOPER_REQS_TXT }}
