@@ -1,6 +1,10 @@
 # SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
 #
 # SPDX-License-Identifier: CC0-1.0
+#
+# Configuration for mise-en-place
+#
+# See: https://mise.jdx.dev/
 
 [tools]
 awscli = "latest"
