@@ -29,7 +29,7 @@ tasks:
       - python3 -m ruff format -q
 
   test:
-    desc: Run pytest and print coverage statistics
+    desc: Run pytest
     dir: "{{.USER_WORKING_DIR}}"
     cmds:
-      - python3 -m pytest --cov=. --cov-report term
+      - python3 -m pytest
