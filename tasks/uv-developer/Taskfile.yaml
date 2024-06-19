@@ -17,10 +17,10 @@ vars:
 
 tasks:
   compile:
-    desc: Compile requirements files
+    desc: Compile Python requirements files
     dir: "{{ .USER_WORKING_DIR }}"
     cmds:
-      - uv pip compile -U -o {{ .PY_DEVELOPER_REQS_TXT }} -q {{ .PY_DEVELOPER_REQS_IN }}
+      - uv pip compile -o {{ .PY_DEVELOPER_REQS_TXT }} -q {{ .PY_DEVELOPER_REQS_IN }}
 
   create:
     desc: Create Python virtual environment
@@ -41,7 +41,14 @@ tasks:
       - uv pip install -e .
 
   sync:
-    desc: Sync virtual environment with {{ .PY_DEVELOPER_REQS_TXT }}
+    desc: Sync Python virtual environment with {{ .PY_DEVELOPER_REQS_TXT }}
     dir: "{{ .USER_WORKING_DIR }}"
     cmds:
       - uv pip sync {{ .PY_DEVELOPER_REQS_TXT }}
+
+  update-reqs:
+    desc: Update Python requirements files
+    internal: true
+    dir: "{{ .USER_WORKING_DIR }}"
+    cmds:
+      - uv pip compile -U -o {{ .PY_DEVELOPER_REQS_TXT }} -q {{ .PY_DEVELOPER_REQS_IN }}

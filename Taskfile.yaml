@@ -60,3 +60,9 @@ tasks:
       - task: pre-commit:run
         vars: { HOOK_ID: "mypy" }
       - task: py:test
+
+  update:
+    desc: Update
+    cmds:
+      - task: venv:update-reqs
+      - task: venv:sync
