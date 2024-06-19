@@ -48,6 +48,9 @@ allow_unsafe = true # Default behavior in future pip-tools releases
 generate-hashes = true
 strip_extras = true # Default behavior in future pip-tools releases
 
+[tool.pytest.ini_options]
+addopts = "--cov=. --cov-report html"
+
 [tool.ruff]
 src = ["src", "tests"]
 target-version = "py310"
