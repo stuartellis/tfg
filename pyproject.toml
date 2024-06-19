@@ -49,7 +49,7 @@ generate-hashes = true
 strip_extras = true # Default behavior in future pip-tools releases
 
 [tool.pytest.ini_options]
-addopts = "--cov=. --cov-report html"
+addopts = "--cov=. --cov-report term"
 
 [tool.ruff]
 src = ["src", "tests"]
