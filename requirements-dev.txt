@@ -109,9 +109,14 @@ pytest==8.2.2 \
     # via
     #   -r requirements-dev.in
     #   pytest-cov
+    #   pytest-randomly
 pytest-cov==5.0.0 \
     --hash=sha256:4f0764a1219df53214206bf1feea4633c3b558a2925c8b59f144f682861ce652 \
     --hash=sha256:5837b58e9f6ebd335b0f8060eecce69b662415b16dc503883a02f45dfeb14857
+    # via -r requirements-dev.in
+pytest-randomly==3.0.0 \
+    --hash=sha256:07b642e177c5921386fa36ee3995a4bda918a1d20b3806a4f397a02788f88331 \
+    --hash=sha256:f5ac7c6e30a32c1aa5ae911e00b5ffd6a0df38eb818f6b539e1e7b89995724ed
     # via -r requirements-dev.in
 ruff==0.4.9 \
     --hash=sha256:06b60f91bfa5514bb689b500a25ba48e897d18fea14dce14b48a0c40d1635893 \
