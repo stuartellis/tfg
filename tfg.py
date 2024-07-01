@@ -21,11 +21,14 @@ SPDX-License-Identifier: MIT
 
 """
 
+# Disable check for line-length
+# ruff: noqa: E501
+
 import argparse
 import json
 import subprocess
 import sys
-from os import environ
+from os import environ, pathsep
 from pathlib import Path
 from string import Template
 from typing import Any
@@ -44,12 +47,15 @@ OPTIONAL_VARS = [
 ]
 
 TEMPLATE_SUB_COMMANDS = {
-    "apply": "",
-    "fmt": "",
-    "destroy": "",
-    "init": "",
-    "plan": "",
-    "validate": "",
+    "apply": "$tf_exe -chdir=$tf_def_dir apply -auto-approve $tf_plan_path",
+    "check": "$tf_exe -chdir=$tf_def_dir fmt -check -diff -recursive",
+    "fmt": "$tf_exe -chdir=$tf_def_dir fmt",
+    "destroy": "$tf_exe -chdir=$tf_def_dir apply -destroy -auto-approve $tf_vars_opt $tf_vars_files_opt",
+    "forget": "$tf_exe -chdir=$tf_def_dir apply workspace delete $variant",
+    "init": "$tf_exe -chdir=$tf_def_dir init $tf_backend_opt",
+    "plan": "$tf_exe -chdir=$tf_def_dir plan -out=$tf_plan_path $tf_vars_opt $tf_vars_files_opt",
+    "show": "$tf_exe -chdir=$tf_def_dir show -json",
+    "validate": "$tf_exe -chdir=$tf_def_dir validate",
     "version": "$tf_exe version",
 }
 
@@ -116,12 +122,33 @@ def build_path_set(root_dir: Path, environment: str, stack: str) -> dict[str, Pa
             "environments", environment, "backend.json"
         ).absolute(),
         "tf_modules_dir": tf_root_dir.joinpath("modules").absolute(),
+        "tf_tmp_dir": tf_root_dir.joinpath("tmp").absolute(),
     }
 
 
 def build_tf_backend_opt(context: dict[str, str]) -> str:
     """Return backend options for TF."""
     opts = [f"-backend-config={opt}={context[opt]}" for opt in context]
+    opts.append("-backend-config=workspace_key_prefix=workspaces")
+    return " ".join(opts)
+
+
+def build_tf_plan_name(context: dict[str, str]) -> str:
+    """Return name of plan file for TF."""
+    return (
+        f"{context['environment']}-{context['stack_name']}-{context['variant']}.tfplan"
+    )
+
+
+def build_tf_vars_files_opt(context: dict[str, str]) -> str:
+    """Return var files for TF."""
+    return f"-var-file=${context['tf_envs_dir']}/all/${context['stack_name']}.tfvars -var-file=${context['tf_env_dir']}/${context['stack_name']}.tfvars"
+
+
+def build_tf_vars_opt(context: dict[str, str]) -> str:
+    """Return vars for TF."""
+    names = ["environment", "stack_name", "variant"]
+    opts = [f"-vars={name}={context[name]}" for name in names]
     return " ".join(opts)
 
 
@@ -207,10 +234,19 @@ def run(options: dict[str, Any]) -> None:
             host_vars, tf_backend_vars, env_vars, path_set
         )
 
+        if not context["variant"]:
+            context["variant"] = "default"
+
         if tf_backend_required(context):
             context["tf_backend_opt"] = build_tf_backend_opt(context[TF_BACKEND_MODE])
         else:
             context["tf_backend_opt"] = "-backend=false"
+
+        context["tf_plan_path"] = pathsep.join(
+            [context["tf_tmp_dir"], build_tf_plan_name(context)]
+        )
+        context["tf_vars_files_opt"] = build_tf_vars_files_opt(context)
+        context["tf_vars_opt"] = build_tf_vars_opt(context)
 
         if options["debug"]:
             print_debug_info(options, context)
