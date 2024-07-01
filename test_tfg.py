@@ -36,5 +36,5 @@ def test_info_contains_tfg_version() -> None:
 
 def test_tf_exe_is_valid() -> None:
     """Function returns valid executable name."""
-    tf_exe_name = tfg.tf_exe_name()
+    tf_exe_name = tfg.tf_exe()
     assert tf_exe_name in ["terraform", "tofu"]
