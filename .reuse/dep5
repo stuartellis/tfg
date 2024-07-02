@@ -6,3 +6,7 @@ Source: https://github.com/stuartellis/tfg
 Files: *.in.txt
 Copyright: Stuart Ellis
 License: CC0-1.0
+
+Files: *.json
+Copyright: Stuart Ellis
+License: CC0-1.0
