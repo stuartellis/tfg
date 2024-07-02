@@ -12,7 +12,7 @@ silent: true
 
 vars:
   PY_DEVELOPER_REQS_IN: "requirements-dev.in"
-  PY_DEVELOPER_REQS_TXT: "requirements-dev.txt"
+  PY_DEVELOPER_REQS_TXT: "requirements-dev.in.txt"
   PY_DEVELOPER_VENV: ".venv"
 
 tasks:
@@ -20,7 +20,11 @@ tasks:
     desc: Compile Python requirements files
     dir: "{{ .USER_WORKING_DIR }}"
     cmds:
-      - uv pip compile -o {{ .PY_DEVELOPER_REQS_TXT }} -q {{ .PY_DEVELOPER_REQS_IN }}
+      - for: { var: PY_REQS_IN }
+        cmd: uv pip compile -o {{ .ITEM }}.txt -q {{ .ITEM }}
+    vars:
+      PY_REQS_IN:
+        sh: ls requirements-*.in
 
   create:
     desc: Create Python virtual environment
@@ -51,4 +55,8 @@ tasks:
     internal: true
     dir: "{{ .USER_WORKING_DIR }}"
     cmds:
-      - uv pip compile -U -o {{ .PY_DEVELOPER_REQS_TXT }} -q {{ .PY_DEVELOPER_REQS_IN }}
+      - for: { var: PY_REQS_IN }
+        cmd: uv pip compile -U -o {{ .ITEM }}.txt -q {{ .ITEM }}
+    vars:
+      PY_REQS_IN:
+        sh: ls requirements-*.in

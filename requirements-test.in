@@ -6,14 +6,5 @@
 # Include requirements for running the application
 -r requirements-app.in
 
-# Include requirements for releasing the application
--r .python-requirements/release.in
-
-# Include requirements for linting the application
--r .python-requirements/linting.in
-
-# Include requirements for building documentation
--r .python-requirements/docs.in
-
 # Include requirements for testing the application
 -r .python-requirements/testing.in

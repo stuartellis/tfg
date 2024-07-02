@@ -1,0 +1,88 @@
+# SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
+#
+# SPDX-License-Identifier: MIT
+#
+# Container tasks for the Task runner. These rely on:
+#
+# - Docker or a compatible tool: https://www.docker.com/
+# - setuptools_scm: https://setuptools-scm.readthedocs.io
+# - Trivy: https://aquasecurity.github.io/trivy
+#
+# yamllint disable rule:line-length
+
+version: "3"
+
+silent: true
+
+vars:
+  CONTAINER_EXE: docker
+  CONTAINER_BUILD_FILE: Dockerfile
+  IMAGE_PLATFORM: "{{ARCH}}"
+  TRIVY_CACHE_DIR: ./tmp/trivy
+  TRIVY_IGNORE_FILE: ./.trivyignore.yaml
+
+tasks:
+  build:
+    desc: Build container image
+    cmds:
+      - "{{.CONTAINER_EXE}} buildx build --platform {{.IMAGE_PLATFORM}} -f {{.CONTAINER_BUILD_FILE}} -t {{.IMAGE_NAME}}:{{.IMAGE_VERSION}} --label org.opencontainers.image.version={{.IMAGE_VERSION}} ."
+    vars:
+      IMAGE_NAME:
+        sh: basename $PWD
+      IMAGE_VERSION:
+        sh: python3 -m setuptools_scm
+
+  lint:
+    desc: Check container build file with Trivy
+    cmds:
+      - "trivy config --cache-dir {{.TRIVY_CACHE_DIR}} --ignorefile {{.TRIVY_IGNORE_FILE}} --quiet {{.CONTAINER_BUILD_FILE}}"
+    vars:
+      IMAGE_NAME:
+        sh: basename $PWD
+      IMAGE_VERSION:
+        sh: python3 -m setuptools_scm
+
+  rebuild:
+    desc: Force a complete rebuild of container image
+    cmds:
+      - "{{.CONTAINER_EXE}} buildx build --platform {{.IMAGE_PLATFORM}} -f {{.CONTAINER_BUILD_FILE}} -t {{.IMAGE_NAME}}:{{.IMAGE_VERSION}} --no-cache --pull --label org.opencontainers.image.version={{.IMAGE_VERSION}} ."
+    vars:
+      IMAGE_NAME:
+        sh: basename $PWD
+      IMAGE_VERSION:
+        sh: python3 -m setuptools_scm
+
+  run:
+    desc: Run container image
+    cmds:
+      - "{{.CONTAINER_EXE}} run --rm -it --user {{.USER_ID}} --mount type=bind,source=.,destination=/opt/app -w /opt/app {{.IMAGE_NAME}}:{{.IMAGE_VERSION}}"
+    vars:
+      IMAGE_NAME:
+        sh: basename $PWD
+      IMAGE_VERSION:
+        sh: python3 -m setuptools_scm
+      USER_ID:
+        sh: id -u
+
+  scan:
+    desc: Scan container image with Trivy
+    cmds:
+      - "trivy image --cache-dir {{.TRIVY_CACHE_DIR}} --compliance docker-cis --ignorefile {{.TRIVY_IGNORE_FILE}} --quiet {{.IMAGE_NAME}}:{{.IMAGE_VERSION}}"
+    vars:
+      IMAGE_NAME:
+        sh: basename $PWD
+      IMAGE_VERSION:
+        sh: python3 -m setuptools_scm
+
+  shell:
+    desc: Open shell in container image
+    cmds:
+      - "{{.CONTAINER_EXE}} run --rm -it --user {{.USER_ID}} --mount type=bind,source=.,destination=/opt/app -w /opt/app {{.IMAGE_NAME}}:{{.IMAGE_VERSION}} /bin/sh"
+    interactive: true
+    vars:
+      IMAGE_NAME:
+        sh: basename $PWD
+      IMAGE_VERSION:
+        sh: python3 -m setuptools_scm
+      USER_ID:
+        sh: id -u

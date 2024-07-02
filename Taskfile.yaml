@@ -11,10 +11,18 @@ version: "3"
 silent: true
 
 includes:
-  pre-commit: tasks/pre-commit
-  project: tasks/project
-  py: tasks/python-developer
-  venv: tasks/uv-developer
+  containers:
+    taskfile: tasks/console/containers
+  doc: tasks/console/mkdocs
+  pre-commit:
+    taskfile: tasks/console/pre-commit
+    internal: true
+  project:
+    taskfile: tasks/console/project
+    internal: true
+  py:lint: tasks/console/ruff
+  py:test: tasks/console/pytest
+  venv: tasks/console/uv
 
 tasks:
   default:
@@ -27,17 +35,30 @@ tasks:
     cmds:
       - task: pre-commit:setup
 
+  build:
+    desc: Build artifacts
+    cmds:
+      - task: doc:build
+      - task: containers:build
+
   clean:
-    desc: Delete generated files
+    desc: Delete generated files for project
     cmds:
       - task: project:clean
-      - task: py:clean
+      - task: doc:clean
+      - task: py:test:clean
+      - task: py:lint:clean
+
+  docs:
+    desc: Run Website for project documentation
+    cmds:
+      - task: doc:serve
 
   fmt:
     desc: Format code
     aliases: [format]
     cmds:
-      - task: py:fmt
+      - task: py:lint:fmt
 
   lint:
     desc: Run all checks
@@ -53,16 +74,17 @@ tasks:
   test:
     desc: Run tests
     cmds:
-      - task: pre-commit:run
-        vars: { HOOK_ID: "ruff-format" }
-      - task: pre-commit:run
-        vars: { HOOK_ID: "ruff" }
-      - task: pre-commit:run
-        vars: { HOOK_ID: "mypy" }
-      - task: py:test
+      - task: py:lint:check
+      - task: py:test:typehints
+      - task: py:test:unit
 
   update:
-    desc: Update
+    desc: Update project dependencies
     cmds:
       - task: venv:update-reqs
       - task: venv:sync
+
+  version:
+    desc: Get current project version
+    cmds:
+      - task: project:version

@@ -1,0 +1,33 @@
+# SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
+#
+# SPDX-License-Identifier: MIT
+#
+# Developer tasks for Ruff, formatter and linter for Python:
+#
+# https://docs.astral.sh/ruff/
+
+version: "3"
+
+silent: true
+
+tasks:
+  check:
+    desc: Run ruff checks
+    aliases: [lint, run]
+    dir: "{{.USER_WORKING_DIR}}"
+    cmds:
+      - python3 -m ruff check
+
+  clean:
+    desc: Delete generated files for formatting and linting
+    internal: true
+    cmds:
+      - python3 -m ruff clean -q
+
+  fmt:
+    desc: Run ruff formatter with import sorting
+    aliases: [format]
+    dir: "{{.USER_WORKING_DIR}}"
+    cmds:
+      - python3 -m ruff check --select I --fix -q
+      - python3 -m ruff format -q

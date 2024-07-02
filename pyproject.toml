@@ -3,14 +3,10 @@
 # SPDX-License-Identifier: MIT
 #
 
-[build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "tfg"
-version = "0.1.0"
-description = "Generates commands for Terraform"
+description = "A little application that generates TF commands"
+dynamic = ["version"]
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
@@ -34,6 +30,10 @@ Documentation = "https://github.com/stuartellis/tfg#readme"
 Issues = "https://github.com/stuartellis/tfg/issues"
 Source = "https://github.com/stuartellis/tfg"
 
+[build-system]
+requires = ["setuptools>=64", "setuptools_scm>=8"]
+build-backend = "setuptools.build_meta"
+
 [tool.mypy]
 disallow_untyped_defs = true
 follow_imports = "normal"
@@ -53,7 +53,7 @@ addopts = "--cov=. --cov-report term"
 
 [tool.ruff]
 src = ["src", "tests"]
-target-version = "py310"
+target-version = "py312"
 line-length = 88
 indent-width = 4
 
@@ -62,14 +62,12 @@ select = ["ALL"]
 
 # Disable rules for compatibility with ruff formatter:
 # https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
-# Also disable T201, which forbids print()
 ignore = [
   "COM812", "COM819",
   "D206", "D300",
   "E111", "E114", "E117",
   "ISC001", "ISC002",
   "Q000", "Q001", "Q002", "Q003",
-  "T201",
   "W191"
 ]
 
@@ -77,7 +75,7 @@ ignore = [
 convention = "pep257"
 
 [tool.ruff.lint.per-file-ignores]
-"./test_*.py" = [
+"./tests/test_*.py" = [
     # S101 forbids assert()
     "S101",
 ]
@@ -86,6 +84,10 @@ convention = "pep257"
 quote-style = "double"
 indent-style = "space"
 line-ending = "auto"
+
+[tool.setuptools_scm]
+version_scheme = "post-release"
+local_scheme = "no-local-version"
 
 [tool.uv.pip]
 generate-hashes = true
