@@ -177,7 +177,6 @@ list-all-pkgs: false
 misconfiguration:
     include-non-failures: false
     checks-bundle-repository: ghcr.io/aquasecurity/trivy-policies:0
-    reset-checks-bundle: false
     scanners:
         - dockerfile
 output: ""
@@ -194,7 +193,6 @@ rego:
     skip-policy-update: false
     trace: false
 report: all
-reset: false
 scan:
     compliance: ""
     file-patterns: []
