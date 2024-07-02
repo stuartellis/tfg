@@ -33,6 +33,8 @@ from pathlib import Path
 from string import Template
 from typing import Any
 
+## Constants
+
 VERSION = "0.1.0"
 
 REQUIRED_VARS = [
@@ -52,14 +54,111 @@ TEMPLATE_SUB_COMMANDS = {
     "fmt": "$tf_exe -chdir=$tf_def_dir fmt",
     "destroy": "$tf_exe -chdir=$tf_def_dir apply -destroy -auto-approve $tf_vars_opt $tf_vars_files_opt",
     "forget": "$tf_exe -chdir=$tf_def_dir apply workspace delete $variant",
-    "init": "$tf_exe -chdir=$tf_def_dir init $tf_backend_opt",
+    "init": "$tf_exe -chdir=$tf_def_dir init $tf_backend_opts",
     "plan": "$tf_exe -chdir=$tf_def_dir plan -out=$tf_plan_path $tf_vars_opt $tf_vars_files_opt",
     "show": "$tf_exe -chdir=$tf_def_dir show -json",
     "validate": "$tf_exe -chdir=$tf_def_dir validate",
     "version": "$tf_exe version",
 }
 
-TF_BACKEND_MODE = "aws"
+## Functions for template context
+
+
+def build_config(
+    env_vars: dict[str, str],
+    path_set: dict[str, Path],
+) -> dict[str, str]:
+    """Build configuration object."""
+    env_vars = {k.lower(): v for k, v in env_vars.items()}
+    paths = {p: str(v) for p, v in path_set.items()}
+    return {**env_vars, **paths}
+
+
+def build_path_set(root_dir: Path, environment: str, stack: str) -> dict[str, Path]:
+    """Return a dictionary of the required paths."""
+    tf_root_dir = root_dir.joinpath("terraform1", "stacks")
+    return {
+        "project_dir": root_dir.absolute(),
+        "tf_defs_dir": tf_root_dir.joinpath("definitions").absolute(),
+        "tf_def_dir": tf_root_dir.joinpath("definitions", stack).absolute(),
+        "tf_envs_dir": tf_root_dir.joinpath("environments").absolute(),
+        "tf_env_dir": tf_root_dir.joinpath("environments", environment).absolute(),
+        "tf_backend_json": tf_root_dir.joinpath(
+            "environments", environment, "backend.json"
+        ).absolute(),
+        "tf_modules_dir": tf_root_dir.joinpath("modules").absolute(),
+        "tf_tmp_dir": tf_root_dir.joinpath("tmp").absolute(),
+    }
+
+
+def build_tf_remote_backend_opts(document: Any, backend_type: str) -> str:  # noqa: ANN401
+    """Return remote backend options for TF."""
+    config = document[backend_type]
+    opts = [f"-backend-config={opt}={config[opt]}" for opt in config]
+    opts.append("-backend-config=workspace_key_prefix=workspaces")
+    return " ".join(opts)
+
+
+def build_tf_plan_name(config: dict[str, str]) -> str:
+    """Return name of plan file for TF."""
+    return f"{config['environment']}-{config['stack_name']}-{config['variant']}.tfplan"
+
+
+def build_tf_vars_files_opt(config: dict[str, str]) -> str:
+    """Return var files for TF."""
+    return f"-var-file={config['tf_envs_dir']}/all/{config['stack_name']}.tfvars -var-file={config['tf_env_dir']}/{config['stack_name']}.tfvars"
+
+
+def build_tf_vars_opt(config: dict[str, str]) -> str:
+    """Return vars for TF."""
+    names = ["environment", "stack_name", "variant"]
+    opts = [f"-vars={name}={config[name]}" for name in names]
+    return " ".join(opts)
+
+
+def tf_remote_backend_required(config: dict[str, str]) -> bool:
+    """Specify if a TF remote backend is required."""
+    if "st_enable_backend" in config and config["st_enable_backend"].lower() == "true":
+        return True
+    return not (
+        "st_enable_backend" in config and config["st_enable_backend"].lower() == "false"
+    )
+
+
+def tf_backend_type() -> str:
+    """Return current backend type for TF."""
+    return "aws"
+
+
+def tf_context(config: dict[str, str]) -> dict[str, str]:
+    """Return context for TF commands."""
+    context = config.copy()
+    context["tf_exe"] = tf_exe()
+
+    context["tf_plan_path"] = pathsep.join(
+        [config["tf_tmp_dir"], build_tf_plan_name(context)]
+    )
+    context["tf_vars_files_opt"] = build_tf_vars_files_opt(config)
+    context["tf_vars_opt"] = build_tf_vars_opt(config)
+
+    if tf_remote_backend_required(config):
+        backend_type = tf_backend_type()
+        tf_backend_document = load_json(Path(context["tf_backend_json"]))
+        context["tf_backend_opts"] = build_tf_remote_backend_opts(
+            tf_backend_document, backend_type
+        )
+    else:
+        context["tf_backend_opts"] = "-backend=false"
+
+    return context
+
+
+def tf_exe() -> str:
+    """Return executable for TF."""
+    return "terraform"
+
+
+### Functions for command-line
 
 
 def build_arg_parser(version: str, subcommands: list[str]) -> argparse.ArgumentParser:
@@ -84,95 +183,25 @@ def build_arg_parser(version: str, subcommands: list[str]) -> argparse.ArgumentP
         "--version",
         help="show the version of this script and exit",
         action="version",
-        version="%(prog)s " + version,
+        version=f"%(prog)s {version}",
     )
     return parser
 
 
-def build_context(
-    host_vars: dict[str, str],
-    tf_backend_vars: dict[str, str],
-    env_vars: dict[str, str],
-    path_set: dict[str, Path],
-) -> dict[str, str]:
-    """Build context object."""
-    env_vars = {k.lower(): v for k, v in env_vars.items()}
-    paths = {p: str(v) for p, v in path_set.items()}
-    return {**host_vars, **tf_backend_vars, **env_vars, **paths}
-
-
-def build_env_vars(
-    required_vars: list[str], optional_vars: list[str]
-) -> dict[str, str]:
-    """Return object of environment variables for templates."""
+def get_env_vars(required_vars: list[str], optional_vars: list[str]) -> dict[str, str]:
+    """Return object of environment variables."""
     env_variables = [*required_vars, *optional_vars]
     return {k: v for k, v in environ.items() if k in env_variables}
-
-
-def build_path_set(root_dir: Path, environment: str, stack: str) -> dict[str, Path]:
-    """Return paths."""
-    tf_root_dir = root_dir.joinpath("terraform1", "stacks")
-    return {
-        "project_dir": root_dir.absolute(),
-        "tf_defs_dir": tf_root_dir.joinpath("definitions").absolute(),
-        "tf_def_dir": tf_root_dir.joinpath("definitions", stack).absolute(),
-        "tf_envs_dir": tf_root_dir.joinpath("environments").absolute(),
-        "tf_env_dir": tf_root_dir.joinpath("environments", environment).absolute(),
-        "tf_backend_json": tf_root_dir.joinpath(
-            "environments", environment, "backend.json"
-        ).absolute(),
-        "tf_modules_dir": tf_root_dir.joinpath("modules").absolute(),
-        "tf_tmp_dir": tf_root_dir.joinpath("tmp").absolute(),
-    }
-
-
-def build_tf_backend_opt(context: dict[str, str]) -> str:
-    """Return backend options for TF."""
-    opts = [f"-backend-config={opt}={context[opt]}" for opt in context]
-    opts.append("-backend-config=workspace_key_prefix=workspaces")
-    return " ".join(opts)
-
-
-def build_tf_plan_name(context: dict[str, str]) -> str:
-    """Return name of plan file for TF."""
-    return (
-        f"{context['environment']}-{context['stack_name']}-{context['variant']}.tfplan"
-    )
-
-
-def build_tf_vars_files_opt(context: dict[str, str]) -> str:
-    """Return var files for TF."""
-    return f"-var-file=${context['tf_envs_dir']}/all/${context['stack_name']}.tfvars -var-file=${context['tf_env_dir']}/${context['stack_name']}.tfvars"
-
-
-def build_tf_vars_opt(context: dict[str, str]) -> str:
-    """Return vars for TF."""
-    names = ["environment", "stack_name", "variant"]
-    opts = [f"-vars={name}={context[name]}" for name in names]
-    return " ".join(opts)
-
-
-def tf_backend_required(context: dict[str, str]) -> bool:
-    """Specify if a TF remote backend is required."""
-    if (
-        "st_enable_backend" in context
-        and context["st_enable_backend"].lower() == "true"
-    ):
-        return True
-    return not (
-        "st_enable_backend" in context
-        and context["st_enable_backend"].lower() == "false"
-    )
-
-
-def check_env_vars(env_vars: dict[str, str], required_vars: list[str]) -> list[str]:
-    """Return all of the required variables that are not present."""
-    return [r_var for r_var in required_vars if r_var not in env_vars]
 
 
 def execute_cmd_string(cmd: str) -> subprocess.CompletedProcess:
     """Execute the command."""
     return subprocess.run(cmd, check=True, shell=True)  # noqa: S602
+
+
+def check_env_vars(env_vars: dict[str, str], required_vars: list[str]) -> list[str]:
+    """Return all of the required variables that are not present."""
+    return [r_var for r_var in required_vars if r_var not in env_vars]
 
 
 def info() -> dict[str, str]:
@@ -217,8 +246,11 @@ def render_cmd_string(context: dict[str, Any], template: str) -> str:
 
 def run(options: dict[str, Any]) -> None:
     """Run."""
-    if options["subcommand"]:
-        env_vars = build_env_vars(REQUIRED_VARS, OPTIONAL_VARS)
+    if not options["subcommand"]:
+        sys.stderr.write("Arguments are required")
+        sys.exit(1)
+    else:
+        env_vars = get_env_vars(REQUIRED_VARS, OPTIONAL_VARS)
         missing_vars = check_env_vars(env_vars, REQUIRED_VARS)
         if len(missing_vars) > 0:
             print(f"Missing required variables: {', '.join(missing_vars)}")
@@ -228,31 +260,19 @@ def run(options: dict[str, Any]) -> None:
         path_set = build_path_set(
             project_root_dir, env_vars["ENVIRONMENT"], env_vars["STACK_NAME"]
         )
-        tf_backend_vars = load_json(path_set["tf_backend_json"])
-        host_vars = {"tf_exe": tf_exe()}
-        context: dict[str, Any] = build_context(
-            host_vars, tf_backend_vars, env_vars, path_set
-        )
 
-        if not context["variant"]:
-            context["variant"] = "default"
+        config = build_config(env_vars, path_set)
 
-        if tf_backend_required(context):
-            context["tf_backend_opt"] = build_tf_backend_opt(context[TF_BACKEND_MODE])
-        else:
-            context["tf_backend_opt"] = "-backend=false"
+        if "variant" not in config:
+            config["variant"] = "default"
 
-        context["tf_plan_path"] = pathsep.join(
-            [context["tf_tmp_dir"], build_tf_plan_name(context)]
-        )
-        context["tf_vars_files_opt"] = build_tf_vars_files_opt(context)
-        context["tf_vars_opt"] = build_tf_vars_opt(context)
+        cmd_context = tf_context(config)
 
         if options["debug"]:
-            print_debug_info(options, context)
+            print_debug_info(options, cmd_context)
 
         template = TEMPLATE_SUB_COMMANDS[options["subcommand"]]
-        cmd = render_cmd_string(context, template)
+        cmd = render_cmd_string(cmd_context, template)
 
         if options["print"]:
             print(cmd)
@@ -268,14 +288,6 @@ def run(options: dict[str, Any]) -> None:
                     f"Process failed because did not return a successful return code. "
                     f"Returned {exc.returncode}\n{exc}"
                 )
-    else:
-        sys.stderr.write("Arguments are required")
-        sys.exit(1)
-
-
-def tf_exe() -> str:
-    """Return executable for TF."""
-    return "terraform"
 
 
 """Run the main() function when this file is executed"""
