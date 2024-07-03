@@ -25,7 +25,7 @@ tasks:
     desc: Run mypy
     dir: "{{.USER_WORKING_DIR}}"
     cmds:
-      - python3 -m mypy . --ignore-missing-imports --scripts-are-modules
+      - python3 -m mypy . --exclude bin --ignore-missing-imports
 
   unit:
     desc: Run pytest
