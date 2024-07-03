@@ -1,14 +1,16 @@
+#!/usr/bin/env python3
+
 # SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
 #
 # SPDX-License-Identifier: MIT
 
 """
-Main module for the TFG application.
+Command-line for the TFG application.
 
-This module provides the default entrypoint for the application.
+This is the expected way to use the application.
 """
 
-from tfg import runner
+from tfg import cli
 
 if __name__ == "__main__":
-    runner.run()
+    cli.main()

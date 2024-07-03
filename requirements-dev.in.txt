@@ -64,10 +64,6 @@ coverage==7.5.4 \
     --hash=sha256:e564c2cf45d2f44a9da56f4e3a26b2236504a496eb4cb0ca7221cd4cc7a9aca9 \
     --hash=sha256:ed550e7442f278af76d9d65af48069f1fb84c9f745ae249c1a183c1e9d1b025c
     # via pytest-cov
-exceptiongroup==1.2.1 \
-    --hash=sha256:5258b9ed329c5bbdd31a309f53cbfb0b155341807f6ff7606a1e801a891b29ad \
-    --hash=sha256:a4785e48b045528f5bfe627b6ad554ff32def154f42372786903b7abcfe1aa16
-    # via pytest
 ghp-import==2.1.0 \
     --hash=sha256:8337dd7b50877f163d4c0289bc1f1c7f127550241988d568c1db512c4324a619 \
     --hash=sha256:9c535c4c61193c2df8871222567d7fd7e5014d835f97dc7b7439069e2413d343
@@ -366,14 +362,6 @@ six==1.16.0 \
     --hash=sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926 \
     --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254
     # via python-dateutil
-tomli==2.0.1 \
-    --hash=sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc \
-    --hash=sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f
-    # via
-    #   coverage
-    #   mypy
-    #   pytest
-    #   setuptools-scm
 typing-extensions==4.12.2 \
     --hash=sha256:04e5ca0351e0f3f85c6853954072df659d0d13fac324d0072316b67d7794700d \
     --hash=sha256:1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8
