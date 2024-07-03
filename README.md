@@ -6,8 +6,6 @@ SPDX-License-Identifier: MIT
 
 # TFG
 
-![stability: experimental](https://img.shields.io/badge/stability-experimental-orange) [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit) [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
-
 A little application that generates Terraform and OpenTF commands.
 
 -----
