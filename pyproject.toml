@@ -51,6 +51,11 @@ testing = [
   "pytest-randomly~=3.0.0",
 ]
 
+## Command-line Interfaces ##
+
+[project.scripts]
+tfg = "tfg.cli:cli"
+
 ## URLs ##
 
 [project.urls]

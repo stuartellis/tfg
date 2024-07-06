@@ -213,7 +213,7 @@ def load_json(file_path: Path) -> Any:  # noqa: ANN401
         return json.load(f_in)
 
 
-def main() -> None:
+def cli() -> None:
     """Run with command-line options."""
     parser = build_arg_parser(version=VERSION, subcommands=[*TEMPLATE_SUB_COMMANDS])
     opts = vars(parser.parse_args())
@@ -280,4 +280,4 @@ def run(options: dict[str, Any]) -> None:
 
 """Run the main() function when this file is executed"""
 if __name__ == "__main__":
-    main()
+    cli()
