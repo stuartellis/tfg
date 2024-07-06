@@ -11,28 +11,28 @@ version: "3"
 silent: true
 
 vars:
-  PY_DEVELOPER_REQS: "requirements-developer.txt"
-  PY_DEVELOPER_VENV: ".venv"
+  PY_DEV_REQS_TXT: "requirements-developer.txt"
+  PY_DEV_VENV: ".venv"
 
 tasks:
   compile:
     desc: Compile Python requirements files
     dir: "{{ .USER_WORKING_DIR }}"
     cmds:
-      - cmd: pip-compile -o {{ .PY_DEVELOPER_REQS }} -q --all-extras pyproject.toml
+      - cmd: pip-compile -o {{ .PY_DEV_REQS_TXT }} -q --all-extras pyproject.toml
       - cmd: pip-compile -o requirements.txt -q pyproject.toml
 
   create:
     desc: Create Python virtual environment
     dir: "{{ .USER_WORKING_DIR }}"
     cmds:
-      - python3 -m venv -q {{ .PY_DEVELOPER_VENV }}
+      - python3 -m venv {{ .PY_DEV_VENV }}
 
   delete:
     desc: Delete Python virtual environment
     dir: "{{ .USER_WORKING_DIR }}"
     cmds:
-      - rm -fr {{ .PY_DEVELOPER_VENV }}
+      - rm -fr {{ .PY_DEV_VENV }}
 
   editable:
     desc: Install as editable to Python virtual environment
@@ -41,15 +41,15 @@ tasks:
       - python3 -m pip install -e .
 
   sync:
-    desc: Sync Python virtual environment with {{ .PY_DEVELOPER_REQS }}
+    desc: Sync Python virtual environment with {{ .PY_DEV_REQS_TXT }}
     dir: "{{ .USER_WORKING_DIR }}"
     cmds:
-      - pip-sync {{ .PY_DEVELOPER_REQS }}
+      - pip-sync {{ .PY_DEV_REQS_TXT }}
 
   update-reqs:
     desc: Update Python dependencies
     internal: true
     dir: "{{ .USER_WORKING_DIR }}"
     cmds:
-      - cmd: pip-compile -o {{ .PY_DEVELOPER_REQS }} -q -U --all-extras pyproject.toml
+      - cmd: pip-compile -o {{ .PY_DEV_REQS_TXT }} -q -U --all-extras pyproject.toml
       - cmd: pip-compile -o requirements.txt -q -U pyproject.toml
