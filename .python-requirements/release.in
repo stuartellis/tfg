@@ -1,6 +1,0 @@
-# SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
-#
-# SPDX-License-Identifier: CC0-1.0
-#
-
-setuptools_scm~=8.1.0

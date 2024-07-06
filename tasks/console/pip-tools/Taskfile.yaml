@@ -11,8 +11,7 @@ version: "3"
 silent: true
 
 vars:
-  PY_DEVELOPER_REQS_IN: "requirements-dev.in"
-  PY_DEVELOPER_REQS_TXT: "requirements-dev.in.txt"
+  PY_DEVELOPER_REQS: "requirements-developer.txt"
   PY_DEVELOPER_VENV: ".venv"
 
 tasks:
@@ -20,11 +19,8 @@ tasks:
     desc: Compile Python requirements files
     dir: "{{ .USER_WORKING_DIR }}"
     cmds:
-      - for: { var: PY_REQS_IN }
-        cmd: pip-compile -o {{ .ITEM }}.txt -q {{ .ITEM }}
-    vars:
-      PY_REQS_IN:
-        sh: ls requirements-*.in
+      - cmd: pip-compile -o {{ .PY_DEVELOPER_REQS }} -q --all-extras pyproject.toml
+      - cmd: pip-compile -o requirements.txt -q pyproject.toml
 
   create:
     desc: Create Python virtual environment
@@ -45,18 +41,15 @@ tasks:
       - python3 -m pip install -e .
 
   sync:
-    desc: Sync Python virtual environment with {{ .PY_DEVELOPER_REQS_TXT }}
+    desc: Sync Python virtual environment with {{ .PY_DEVELOPER_REQS }}
     dir: "{{ .USER_WORKING_DIR }}"
     cmds:
-      - pip-sync {{ .PY_DEVELOPER_REQS_TXT }}
+      - pip-sync {{ .PY_DEVELOPER_REQS }}
 
   update-reqs:
-    desc: Update Python requirements files
+    desc: Update Python dependencies
     internal: true
     dir: "{{ .USER_WORKING_DIR }}"
     cmds:
-      - for: { var: PY_REQS_IN }
-        cmd: pip-compile -U -o {{ .ITEM }}.txt -q {{ .ITEM }}
-    vars:
-      PY_REQS_IN:
-        sh: ls requirements-*.in
+      - cmd: pip-compile -o {{ .PY_DEVELOPER_REQS }} -q -U --all-extras pyproject.toml
+      - cmd: pip-compile -o requirements.txt -q -U pyproject.toml
