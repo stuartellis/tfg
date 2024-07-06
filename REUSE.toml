@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
+#
+# SPDX-License-Identifier: CC0-1.0
+#
+# Configuration for REUSE:
+#
+# https://reuse.software/
+
+version = 1
+SPDX-PackageName = "tfg"
+SPDX-PackageSupplier = "Stuart Ellis <https://www.stuartellis.name>"
+SPDX-PackageDownloadLocation = "https://github.com/stuartellis/tfg"
+
+[[annotations]]
+path = "**.in.txt"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Stuart Ellis"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "**.json"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Stuart Ellis"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "requirements**.txt"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Stuart Ellis"
+SPDX-License-Identifier = "CC0-1.0"
