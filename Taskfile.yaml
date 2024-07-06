@@ -22,7 +22,7 @@ includes:
     internal: true
   py:lint: tasks/console/ruff
   py:test: tasks/console/pytest
-  venv: tasks/console/uv
+  venv: tasks/console/pip-tools
 
 tasks:
   default:

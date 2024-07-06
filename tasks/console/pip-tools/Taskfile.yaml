@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: MIT
 #
-# Developer tasks for uv for the Task runner.
+# Developer tasks for pip-tools for the Task runner.
 #
-# See: https://github.com/astral-sh/uv
+# See: https://pypi.org/project/pip-tools/
 
 version: "3"
 
@@ -21,7 +21,7 @@ tasks:
     dir: "{{ .USER_WORKING_DIR }}"
     cmds:
       - for: { var: PY_REQS_IN }
-        cmd: uv pip compile -o {{ .ITEM }}.txt -q {{ .ITEM }}
+        cmd: pip-compile -o {{ .ITEM }}.txt -q {{ .ITEM }}
     vars:
       PY_REQS_IN:
         sh: ls requirements-*.in
@@ -30,7 +30,7 @@ tasks:
     desc: Create Python virtual environment
     dir: "{{ .USER_WORKING_DIR }}"
     cmds:
-      - uv venv -q {{ .PY_DEVELOPER_VENV }}
+      - python3 -m venv -q {{ .PY_DEVELOPER_VENV }}
 
   delete:
     desc: Delete Python virtual environment
@@ -42,13 +42,13 @@ tasks:
     desc: Install as editable to Python virtual environment
     dir: "{{ .USER_WORKING_DIR }}"
     cmds:
-      - uv pip install -e .
+      - python3 -m pip install -e .
 
   sync:
     desc: Sync Python virtual environment with {{ .PY_DEVELOPER_REQS_TXT }}
     dir: "{{ .USER_WORKING_DIR }}"
     cmds:
-      - uv pip sync {{ .PY_DEVELOPER_REQS_TXT }}
+      - pip-sync {{ .PY_DEVELOPER_REQS_TXT }}
 
   update-reqs:
     desc: Update Python requirements files
@@ -56,7 +56,7 @@ tasks:
     dir: "{{ .USER_WORKING_DIR }}"
     cmds:
       - for: { var: PY_REQS_IN }
-        cmd: uv pip compile -U -o {{ .ITEM }}.txt -q {{ .ITEM }}
+        cmd: pip-compile -U -o {{ .ITEM }}.txt -q {{ .ITEM }}
     vars:
       PY_REQS_IN:
         sh: ls requirements-*.in

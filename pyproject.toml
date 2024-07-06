@@ -92,6 +92,3 @@ line-ending = "auto"
 [tool.setuptools_scm]
 version_scheme = "post-release"
 local_scheme = "no-local-version"
-
-[tool.uv.pip]
-generate-hashes = true
