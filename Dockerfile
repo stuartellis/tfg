@@ -4,7 +4,7 @@
 #
 
 ARG DOCKER_IMAGE_BASE=python:3.12-slim-bookworm
-ARG PYTHON_REQS_FILE=requirements-app.in.txt
+ARG PYTHON_REQS_FILE=requirements.txt
 
 #============ BASE ===========
 
