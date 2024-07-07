@@ -5,6 +5,8 @@
 # Developer tasks for pip-tools for the Task runner.
 #
 # See: https://pypi.org/project/pip-tools/
+#
+# yamllint disable rule:line-length
 
 version: "3"
 
@@ -12,27 +14,16 @@ silent: true
 
 vars:
   PY_DEV_REQS_TXT: "requirements-developer.txt"
-  PY_DEV_VENV: ".venv"
+  PIP_COMPILE_CMD: "pipx run --spec pip-tools pip-compile"
+  PIP_SYNC_CMD: "pipx run --spec pip-tools pip-sync"
 
 tasks:
   compile:
     desc: Compile Python requirements files
     dir: "{{ .USER_WORKING_DIR }}"
     cmds:
-      - cmd: pip-compile -o {{ .PY_DEV_REQS_TXT }} -q --all-extras pyproject.toml
-      - cmd: pip-compile -o requirements.txt -q pyproject.toml
-
-  create:
-    desc: Create Python virtual environment
-    dir: "{{ .USER_WORKING_DIR }}"
-    cmds:
-      - python3 -m venv {{ .PY_DEV_VENV }}
-
-  delete:
-    desc: Delete Python virtual environment
-    dir: "{{ .USER_WORKING_DIR }}"
-    cmds:
-      - rm -fr {{ .PY_DEV_VENV }}
+      - cmd: "{{.PIP_COMPILE_CMD}} -o {{ .PY_DEV_REQS_TXT }} -q --all-extras pyproject.toml"
+      - cmd: "{{.PIP_COMPILE_CMD}} -o requirements.txt -q pyproject.toml"
 
   editable:
     desc: Install as editable to Python virtual environment
@@ -44,12 +35,12 @@ tasks:
     desc: Sync Python virtual environment with {{ .PY_DEV_REQS_TXT }}
     dir: "{{ .USER_WORKING_DIR }}"
     cmds:
-      - pip-sync {{ .PY_DEV_REQS_TXT }}
+      - "{{.PIP_SYNC_CMD}} {{ .PY_DEV_REQS_TXT }}"
 
   update-reqs:
     desc: Update Python dependencies
     internal: true
     dir: "{{ .USER_WORKING_DIR }}"
     cmds:
-      - cmd: pip-compile -o {{ .PY_DEV_REQS_TXT }} -q -U --all-extras pyproject.toml
-      - cmd: pip-compile -o requirements.txt -q -U pyproject.toml
+      - cmd: "{{.PIP_COMPILE_CMD}} -o {{ .PY_DEV_REQS_TXT }} -q -U --all-extras pyproject.toml"
+      - cmd: "{{.PIP_COMPILE_CMD}} -o requirements.txt -q -U pyproject.toml"

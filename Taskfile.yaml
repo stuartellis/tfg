@@ -14,6 +14,7 @@ includes:
   containers:
     taskfile: tasks/console/containers
   doc: tasks/console/mkdocs
+  pip: tasks/console/pip-tools
   pre-commit:
     taskfile: tasks/console/pre-commit
     internal: true
@@ -22,7 +23,6 @@ includes:
     internal: true
   py:lint: tasks/console/ruff
   py:test: tasks/console/pytest
-  venv: tasks/console/pip-tools
 
 tasks:
   default:
@@ -81,8 +81,8 @@ tasks:
   update:
     desc: Update project dependencies
     cmds:
-      - task: venv:update-reqs
-      - task: venv:sync
+      - task: pip:update-reqs
+      - task: pip:sync
 
   version:
     desc: Get current project version
