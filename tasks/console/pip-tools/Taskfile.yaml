@@ -14,8 +14,8 @@ silent: true
 
 vars:
   PY_DEV_REQS_TXT: "requirements-developer.txt"
-  PIP_COMPILE_CMD: "pipx run --spec pip-tools pip-compile"
-  PIP_SYNC_CMD: "pipx run --spec pip-tools pip-sync"
+  PIP_COMPILE_CMD: "pip-compile"
+  PIP_SYNC_CMD: "pip-sync"
 
 tasks:
   compile:
