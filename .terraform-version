@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
+#
+# SPDX-License-Identifier: CC0-1.0
+#
+# Terraform version that is required for developing this project
+#
+# This file may be read by tenv and other utilities
+
+1.8.5
