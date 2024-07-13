@@ -28,3 +28,9 @@ path = "requirements**.txt"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "Stuart Ellis"
 SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ".terraform-version"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Stuart Ellis"
+SPDX-License-Identifier = "CC0-1.0"
