@@ -1,9 +1,1 @@
-# SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
-#
-# SPDX-License-Identifier: CC0-1.0
-#
-# Python version that is required for developing this project
-#
-# This file may be read by pyenv and other utilities
-
 3.10.14

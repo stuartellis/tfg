@@ -5,86 +5,96 @@
 # Configuration for the Task runner
 #
 # See: https://taskfile.dev
+#
+# Required tools:
+#
+# - mkdocs: https://www.mkdocs.org/
+# - mypy: https://www.mypy-lang.org
+# - pre-commit: https://pre-commit.com
+# - pytest: https://pytest.org
+# - pytest-cov: https://pytest-cov.readthedocs.io
+# - pytest-randomly: https://pypi.org/project/pytest-randomly/
+# - setuptools-scm: https://setuptools-scm.readthedocs.io
+#
+# yamllint disable rule:line-length
 
 version: "3"
 
 silent: true
-
-includes:
-  containers:
-    taskfile: tasks/console/containers
-  doc: tasks/console/mkdocs
-  pip: tasks/console/pip-tools
-  pre-commit:
-    taskfile: tasks/console/pre-commit
-    internal: true
-  project:
-    taskfile: tasks/console/project
-    internal: true
-  py:lint: tasks/console/ruff
-  py:test: tasks/console/pytest
 
 tasks:
   default:
     cmds:
       - task: list
 
-  bootstrap:
-    desc: Set up environment for development
-    aliases: [setup]
-    cmds:
-      - task: pre-commit:setup
-
   build:
     desc: Build artifacts
     cmds:
-      - task: doc:build
-      - task: containers:build
+      - pip-compile -o requirements-{{ OS }}-developer.txt -q --all-extras pyproject.toml
+      - pip-compile -o requirements-{{ OS }}.txt -q pyproject.toml
 
   clean:
     desc: Delete generated files for project
     cmds:
-      - task: project:clean
-      - task: doc:clean
-      - task: py:test:clean
-      - task: py:lint:clean
+      - python3 -m ruff clean -q
+      - for:
+          [
+            "__pycache__",
+            ".coverage",
+            ".mypy_cache",
+            ".pytest_cache",
+            "site",
+            "tmp",
+          ]
+        cmd: rm -fr {{ .ITEM }}
 
   docs:
     desc: Run Website for project documentation
     cmds:
-      - task: doc:serve
+      - python3 -m mkdocs serve
 
   fmt:
     desc: Format code
     aliases: [format]
     cmds:
-      - task: py:lint:fmt
+      - python3 -m ruff check --select I --fix -q
+      - python3 -m ruff format -q
 
   lint:
     desc: Run all checks
     aliases: [check]
     cmds:
-      - task: pre-commit:check
+      - pre-commit run --all-files
 
   list:
     desc: List available tasks
     cmds:
       - task --list
 
+  setup:
+    desc: Set up environment for development
+    aliases: [bootstrap]
+    cmds:
+      - python3 -m pip install -q --disable-pip-version-check --require-virtualenv -e .
+      - pre-commit install
+
   test:
     desc: Run tests
     cmds:
-      - task: py:lint:check
-      - task: py:test:typehints
-      - task: py:test:unit
+      - task: lint
+      - python3 -m mypy . --exclude bin --ignore-missing-imports
+      - python3 -m pytest
 
-  update:
-    desc: Update project dependencies
+  upgrade:
+    desc: Upgrade requirements files
     cmds:
-      - task: pip:update-reqs
-      - task: pip:sync
+      - pip-compile -o requirements-{{ OS }}-developer.txt -q -U --all-extras pyproject.toml
+      - pip-compile -o requirements-{{ OS }}.txt -q -U pyproject.toml
 
   version:
     desc: Get current project version
     cmds:
-      - task: project:version
+      - "echo {{ .PROJECT_VERSION }}"
+    vars:
+      PROJECT_VERSION:
+        sh: python3 -m setuptools_scm

@@ -29,7 +29,7 @@ classifiers = [
 dependencies = []
 
 [project.optional-dependencies]
-doc = [
+docs = [
   "mkdocs~=1.6.0",
   "mkdocstrings~=0.25.0",
   "mkdocstrings-python~=1.10.0",
