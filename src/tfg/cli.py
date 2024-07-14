@@ -16,8 +16,8 @@ import argparse
 import json
 import subprocess
 import sys
-from os import environ, pathsep
 from importlib.metadata import version
+from os import environ, pathsep
 from pathlib import Path
 from shutil import which
 from string import Template
@@ -293,8 +293,8 @@ def run(options: dict[str, Any]) -> None:
                     )
 
 
-def get_version():
-    """"Return version."""
+def get_version() -> str:
+    """Return version."""
     return version(__package__)
 
 
