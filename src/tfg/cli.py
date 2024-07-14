@@ -17,14 +17,13 @@ import json
 import subprocess
 import sys
 from os import environ, pathsep
+from importlib.metadata import version
 from pathlib import Path
 from shutil import which
 from string import Template
 from typing import Any
 
 ## Constants
-
-VERSION = "0.1.0"
 
 REQUIRED_VARS = [
     "ENVIRONMENT",
@@ -159,7 +158,8 @@ def tf_exe(tf_names: list[str]) -> str:
 
 def cli() -> None:
     """Run with command-line options."""
-    parser = build_arg_parser(version=VERSION, subcommands=[*TEMPLATE_SUB_COMMANDS])
+    version_id = get_version()
+    parser = build_arg_parser(version=version_id, subcommands=[*TEMPLATE_SUB_COMMANDS])
     opts = vars(parser.parse_args())
     run(opts)
 
@@ -239,7 +239,7 @@ def info() -> dict[str, str]:
     return {
         "python_version": ".".join([str(v) for v in python_version]),
         "tf_exe": tf_exe(TF_EXES),
-        "tfg_version": VERSION,
+        "tfg_version": get_version(),
     }
 
 
@@ -291,6 +291,11 @@ def run(options: dict[str, Any]) -> None:
                         f"Process failed because did not return a successful return code. "
                         f"Returned {exc.returncode}\n{exc}"
                     )
+
+
+def get_version():
+    """"Return version."""
+    return version(__package__)
 
 
 """Run the main() function when this file is executed"""
