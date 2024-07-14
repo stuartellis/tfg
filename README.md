@@ -19,11 +19,19 @@ A little application that generates Terraform and OpenTF commands.
 
 ## Install
 
-The current version of this project should only be installed by contributors.
+You can install this tool with [pipx](https://pypa.github.io/pipx/). For example, this command installs *tfg* from the *main* branch of the GitHub repository:
+
+```shell
+pipx install --spec git+https://github.com/stuartellis/tfg.git tfg
+```
 
 ## Usage
 
-The current version of this project is not for general use.
+You can run this tool immediately with [pipx](https://pypa.github.io/pipx/). For example, this command runs *tfg* from the *main* branch of the GitHub repository:
+
+```shell
+pipx run --spec git+https://github.com/stuartellis/tfg.git tfg --version
+```
 
 ## Contributing
 
