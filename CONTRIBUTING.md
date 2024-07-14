@@ -6,17 +6,10 @@ SPDX-License-Identifier: MIT
 
 # Contributing to This Project
 
-This project includes a [Dev Container](https://code.visualstudio.com/docs/devcontainers/containers) configuration to provide a development environment in Visual Studio Code. To use another type of environment, follow the instructions in the [section on preparing a development environment](#preparing-a-development-environment).
-
-> *Tasks:* This project includes sets of tasks for the [Task](https://taskfile.dev/) tool. The Dev Container installs Task and uses it to prepare the development environment.
-
----
-
 ## Table of Contents
 
 - [Preparing a Development Environment](#preparing-a-development-environment)
 - [Using the Tasks](#using-the-tasks)
-- [Using Container Images](#using-container-images)
 - [Testing](#testing)
 - [Documentation](#documentation)
 - [Commit Messages](#commit-messages)
@@ -30,18 +23,22 @@ This project includes a [Dev Container](https://code.visualstudio.com/docs/devco
 You may develop this project with macOS or any Linux system, including a WSL environment. The system must have these tools installed:
 
 - [Git](https://www.git-scm.com/)
+- [pre-commit](https://pre-commit.com)
+- [Python 3.10 or above](https://www.python.org/)
 - [Task](https://taskfile.dev/)
-- [Python 3.12 or above](https://www.python.org/)
-- [pipx](https://pipx.pypa.io/)
+- [Trivy](https://aquasecurity.github.io/trivy)
 
-> *Microsoft Windows:* Use the Dev Container to develop this project on Microsoft Windows.
+This project includes a [Dev Container](https://code.visualstudio.com/docs/devcontainers/containers) configuration to provide a development environment in Visual Studio Code. This Dev Container configuration includes the required tools.
 
 ### Setting Up The Project
 
-Once you have the necessary tools, run the task in this project to set up environments for development and tests:
+1. Ensure that you have the [required tools](#requirements).
+2. Create a Python virtual environment and activate it.
+3. Use the developer *requirements* file to add the dependencies to the Python virtual environment.
+4. Run the task in this project to set up the environment:
 
 ```shell
-task bootstrap
+task setup
 ```
 
 ## Using the Tasks
@@ -57,38 +54,16 @@ task
 This project provides these tasks:
 
 ```shell
-* bootstrap:               Set up environment for development      (aliases: setup)
-* clean:                   Delete generated files for project
-* docs:                    Run Website for project documentation
-* fmt:                     Format code         (aliases: format)
-* lint:                    Run all checks      (aliases: check)
-* list:                    List available tasks
-* test:                    Run tests
-* update:                  Update project dependencies
-* version:                 Get current project version
-```
-
-Use the top-level tasks for normal operations. These call the appropriate tasks in the namespaces in the correct order.
-
-### Tasks in the Namespaces
-
-You may run a task in a namespace:
-
-```shell
-* py:lint:check:           Run ruff checks                             (aliases: py:lint:lint, py:lint:run)
-* py:lint:fmt:             Run ruff formatter with import sorting      (aliases: py:lint:format)
-* py:test:typehints:       Run mypy
-* py:test:unit:            Run pytest
-* venv:compile:            Compile Python requirements files
-* venv:create:             Create Python virtual environment
-* venv:delete:             Delete Python virtual environment
-* venv:editable:           Install as editable to Python virtual environment
-```
-
-To run one of the tasks in a namespace, specify the namespace and the task, separated by *:* characters. For example, to run the *check* task in the *py:lint* namespace, enter this command:
-
-```shell
-task py:lint:check
+* build:         Build artifacts
+* clean:         Delete generated files for project
+* docs:          Run Website for project documentation
+* fmt:           Format code         (aliases: format)
+* lint:          Run all checks      (aliases: check)
+* list:          List available tasks
+* setup:         Set up environment for development      (aliases: bootstrap)
+* test:          Run tests
+* upgrade:       Upgrade requirements files
+* version:       Get current project version
 ```
 
 ## Testing
@@ -99,49 +74,22 @@ To run the tests for this project, use this command:
 task test
 ```
 
-This runs [pre-commit](https://pre-commit.com/) with the checks that are defined for the project before it runs the test suite.
-
-To produce a test coverage report for this project, use this command:
+This runs the [pre-commit](https://pre-commit.com/) checks before it runs the test suite. This ensures that the project remains in a consistent working state.
 
 ## Documentation
 
 This project follows the [Standard README](https://github.com/RichardLitt/standard-readme) specification for the README file. Documentation is handled by [mkdocs](https://www.mkdocs.org).
 
-The *mkdocs* configuration requires the project to be installed in Python editable mode:
+The *mkdocs* configuration requires the project to be installed in Python editable mode. To ensure that the project is installed in editable mode, run the *setup* task:
 
 ```shell
-task venv:editable
-```
-
-To build the documentation for this project, run this command:
-
-```shell
-task doc:build
+task setup
 ```
 
 To view the documentation for this project in your Web browser, run this command:
 
 ```shell
 task docs
-```
-
-## Using Container Images
-
-To build a container image for this project, use this command:
-
-```shell
-task build
-```
-
-Use the *containers* tasks:
-
-```shell
-* containers:build:         Build container image
-* containers:lint:          Check container build file with Trivy
-* containers:rebuild:       Force a complete rebuild of container image
-* containers:run:           Run container image
-* containers:scan:          Scan container image
-* containers:shell:         Open shell in container image
 ```
 
 ## Commit Messages

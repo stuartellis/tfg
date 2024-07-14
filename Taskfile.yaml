@@ -8,13 +8,23 @@
 #
 # Required tools:
 #
+# - pre-commit: https://pre-commit.com
+# - Trivy: https://aquasecurity.github.io/trivy
+#
+# The *setup* task installs:
+#
+#  - pip-tools: https://pip-tools.readthedocs.io
+#
+# Other expected dependencies in a Python virtual environment:
+#
 # - mkdocs: https://www.mkdocs.org/
 # - mypy: https://www.mypy-lang.org
-# - pre-commit: https://pre-commit.com
 # - pytest: https://pytest.org
 # - pytest-cov: https://pytest-cov.readthedocs.io
 # - pytest-randomly: https://pypi.org/project/pytest-randomly/
 # - setuptools-scm: https://setuptools-scm.readthedocs.io
+#
+# These dependencies must be installed from a requirements file.
 #
 # yamllint disable rule:line-length
 
@@ -30,8 +40,8 @@ tasks:
   build:
     desc: Build artifacts
     cmds:
-      - pip-compile -o requirements-{{ OS }}-developer.txt -q --all-extras pyproject.toml
-      - pip-compile -o requirements-{{ OS }}.txt -q pyproject.toml
+      - python3 -m piptools compile -o requirements-{{ OS }}-developer.txt -q --all-extras pyproject.toml
+      - python3 -m piptools compile -o requirements-{{ OS }}.txt -q pyproject.toml
 
   clean:
     desc: Delete generated files for project
@@ -75,7 +85,11 @@ tasks:
     desc: Set up environment for development
     aliases: [bootstrap]
     cmds:
+      # Install pip-tools
+      - python3 -m pip install -q --disable-pip-version-check --require-virtualenv -e '.[reqs-utilities]'
+      # Install project in editable mode
       - python3 -m pip install -q --disable-pip-version-check --require-virtualenv -e .
+      # Enable pre-commit
       - pre-commit install
 
   test:
@@ -88,8 +102,8 @@ tasks:
   upgrade:
     desc: Upgrade requirements files
     cmds:
-      - pip-compile -o requirements-{{ OS }}-developer.txt -q -U --all-extras pyproject.toml
-      - pip-compile -o requirements-{{ OS }}.txt -q -U pyproject.toml
+      - python3 -m piptools compile -o requirements-{{ OS }}-developer.txt -q -U --all-extras pyproject.toml
+      - python3 -m piptools compile -o requirements-{{ OS }}.txt -q -U pyproject.toml
 
   version:
     desc: Get current project version

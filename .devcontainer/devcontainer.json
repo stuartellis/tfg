@@ -1,5 +1,5 @@
 {
-    "name": "devc-tfg-developer",
+    "name": "devc-tfg",
     "build": {
         "dockerfile": "devcontainer.dockerfile",
         "args": {
@@ -9,7 +9,7 @@
     "features": {
         "ghcr.io/devcontainers/features/docker-in-docker:2.11.0": "latest",
         "ghcr.io/devcontainers/features/git:1.3.0": "os-provided",
-        "ghcr.io/devcontainers/features/python:1.6.2": "3.12.4",
+        "ghcr.io/devcontainers/features/python:1.6.2": "3.10.14",
         "ghcr.io/devcontainers-contrib/features/pre-commit:2": "3.7.1",
         "ghcr.io/devcontainers-contrib/features/go-task:1": "v3.38.0"
     },
@@ -26,7 +26,6 @@
             ]
         }
     },
-    "postCreateCommand": "task setup",
     "containerUser": "vscode",
     "runArgs": [
         "--env-file",
