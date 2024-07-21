@@ -52,10 +52,6 @@ repos:
         args:
           [
             config,
-            --cache-dir,
-            tmp/trivy,
-            --ignorefile,
-            ./.trivyignore.yaml,
             --exit-code,
             "1",
             .,
@@ -68,10 +64,6 @@ repos:
         args:
           [
             fs,
-            --cache-dir,
-            tmp/trivy,
-            --ignorefile,
-            ./.trivyignore.yaml,
             --exit-code,
             "1",
             .,
