@@ -9,3 +9,8 @@
 # We need to opt-in to the YAML format for ignore
 # This feature is needed to specify Dev Container exclusions
 ignorefile: .trivyignore.yaml
+
+scan:
+  skip-dirs:
+    - "./.cache/"
+    - "./tmp/"
