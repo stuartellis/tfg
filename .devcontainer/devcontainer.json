@@ -7,10 +7,10 @@
         }
     },
     "features": {
-        "ghcr.io/devcontainers/features/docker-in-docker:2.11.0": "latest",
-        "ghcr.io/devcontainers/features/git:1.3.1": "os-provided",
-        "ghcr.io/devcontainers/features/python:1.6.3": "3.10.14",
-        "ghcr.io/devcontainers-contrib/features/pre-commit:2": "3.7.1",
+        "ghcr.io/devcontainers/features/docker-in-docker:2": "latest",
+        "ghcr.io/devcontainers/features/git:1": "os-provided",
+        "ghcr.io/devcontainers/features/python:1": "3.10.14",
+        "ghcr.io/devcontainers-contrib/features/pre-commit:2": "3.8.0",
         "ghcr.io/devcontainers-contrib/features/go-task:1": "v3.38.0"
     },
     "customizations": {
