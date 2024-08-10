@@ -45,6 +45,7 @@ TEMPLATE_SUB_COMMANDS = {
     "init": "$tf_exe -chdir=$tf_def_dir init $tf_backend_opts",
     "plan": "$tf_exe -chdir=$tf_def_dir plan -out=$tf_plan_path $tf_vars_opt $tf_vars_files_opt",
     "show": "$tf_exe -chdir=$tf_def_dir show -json",
+    "test": "$tf_exe -chdir=$tf_def_dir test $tf_vars_opt $tf_vars_files_opt",
     "validate": "$tf_exe -chdir=$tf_def_dir validate",
     "version": "$tf_exe version",
 }
