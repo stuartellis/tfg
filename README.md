@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 # TFG
 
-A little application that generates Terraform and OpenTF commands.
+A little application that generates Terraform and OpenTofu commands.
 
 -----
 

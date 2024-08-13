@@ -167,7 +167,9 @@ def cli() -> None:
 
 def build_arg_parser(version: str, subcommands: list[str]) -> argparse.ArgumentParser:
     """Create the parser for the command-line arguments."""
-    parser = argparse.ArgumentParser(description="Generates commands for Terraform.")
+    parser = argparse.ArgumentParser(
+        description="Generates commands for Terraform and OpenTofu."
+    )
     parser.add_argument(
         "subcommand",
         choices=subcommands,
