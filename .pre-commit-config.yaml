@@ -58,7 +58,7 @@ repos:
           ]
         pass_filenames: false
       - id: trivy-fs
-        name: trivy fs
+        name: trivy filesystem
         entry: trivy
         language: system
         args:
