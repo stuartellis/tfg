@@ -37,8 +37,8 @@ docs = [
 ]
 
 lint = [
-  "mypy~=1.10.0",
-  "ruff~=0.5.0",
+  "mypy~=1.11.0",
+  "ruff~=0.6.0",
 ]
 
 release = [
