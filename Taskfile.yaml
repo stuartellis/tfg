@@ -87,7 +87,11 @@ tasks:
     aliases: [bootstrap]
     cmds:
       # Install pip-tools
-      - python3 -m pip install -q --disable-pip-version-check --require-virtualenv -e '.[reqs-utilities]'
+      - python3 -m pip install -q --disable-pip-version-check --require-virtualenv '.[reqs-utilities]'
+      # Install lint requirements
+      - python3 -m pip install -q --disable-pip-version-check --require-virtualenv '.[lint]'
+      # Install testing requirements
+      - python3 -m pip install -q --disable-pip-version-check --require-virtualenv '.[testing]'
       # Install project in editable mode
       - python3 -m pip install -q --disable-pip-version-check --require-virtualenv -e .
       # Enable pre-commit
