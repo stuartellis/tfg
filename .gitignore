@@ -12,6 +12,7 @@ thumbs.db
 
 # Project generated directories
 .task/
+build/
 dist/
 logs/
 tmp/
