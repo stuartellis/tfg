@@ -11,11 +11,11 @@
 # - pre-commit: https://pre-commit.com
 # - Trivy: https://aquasecurity.github.io/trivy
 #
-# The *setup* task installs:
+# The *setup* task installs pip-tools and project dependencies:
 #
 #  - pip-tools: https://pip-tools.readthedocs.io
 #
-# Other expected dependencies in a Python virtual environment:
+# Other tasks expect these dependencies to be in the Python virtual environment:
 #
 # - mkdocs: https://www.mkdocs.org/
 # - mypy: https://www.mypy-lang.org
@@ -24,13 +24,15 @@
 # - pytest-randomly: https://pypi.org/project/pytest-randomly/
 # - setuptools-scm: https://setuptools-scm.readthedocs.io
 #
-# These dependencies must be installed from a requirements file.
-#
 # yamllint disable rule:line-length
 
 version: "3"
 
 silent: true
+
+vars:
+  PY_HOST_EXE: python3
+  PY_VENV_EXE: .venv/bin/python3
 
 tasks:
   default:
@@ -40,13 +42,13 @@ tasks:
   build:
     desc: Build artifacts
     cmds:
-      - python3 -m piptools compile -o requirements-{{ OS }}-developer.txt -q --all-extras pyproject.toml
-      - python3 -m piptools compile -o requirements-{{ OS }}.txt -q pyproject.toml
+      - "{{.PY_VENV_EXE}} -m piptools compile -o requirements-{{OS}}-developer.txt -q --all-extras pyproject.toml"
+      - "{{.PY_VENV_EXE}} -m piptools compile -o requirements-{{OS}}.txt -q pyproject.toml"
 
   clean:
     desc: Delete generated files for project
     cmds:
-      - python3 -m ruff clean -q
+      - "{{.PY_VENV_EXE}} -m ruff clean -q"
       - for:
           [
             "__pycache__",
@@ -62,14 +64,14 @@ tasks:
   docs:
     desc: Run Website for project documentation
     cmds:
-      - python3 -m mkdocs serve
+      - "{{.PY_VENV_EXE}} -m mkdocs serve"
 
   fmt:
     desc: Format code
     aliases: [format]
     cmds:
-      - python3 -m ruff check --select I --fix -q
-      - python3 -m ruff format -q
+      - "{{.PY_VENV_EXE}} -m ruff check --select I --fix -q"
+      - "{{.PY_VENV_EXE}} -m ruff format -q"
 
   lint:
     desc: Run all checks
@@ -86,29 +88,29 @@ tasks:
     desc: Set up environment for development
     aliases: [bootstrap]
     cmds:
-      - python3 -m venv .venv
-      - .venv/bin/python3 -m pip install -q --disable-pip-version-check --require-virtualenv '.[reqs-utilities]'
-      - .venv/bin/python3 -m piptools sync -q requirements-linux-developer.txt
-      - .venv/bin/python3 -m pip install -q --disable-pip-version-check --require-virtualenv -e .
+      - "{{.PY_HOST_EXE}} -m venv .venv"
+      - "{{.PY_VENV_EXE}} -m pip install -q --disable-pip-version-check --require-virtualenv '.[pip-tools]'"
+      - "{{.PY_VENV_EXE}} -m piptools sync -q requirements-{{OS}}-developer.txt"
+      - "{{.PY_VENV_EXE}} -m pip install -q --disable-pip-version-check --require-virtualenv -e ."
       - pre-commit install
 
   test:
     desc: Run tests
     cmds:
       - task: lint
-      - python3 -m mypy . --exclude bin --ignore-missing-imports
-      - python3 -m pytest
+      - "{{.PY_VENV_EXE}} -m mypy . --exclude bin --ignore-missing-imports"
+      - "{{.PY_VENV_EXE}} -m pytest"
 
   upgrade:
     desc: Upgrade requirements files
     cmds:
-      - python3 -m piptools compile -o requirements-{{ OS }}-developer.txt -q -U --all-extras pyproject.toml
-      - python3 -m piptools compile -o requirements-{{ OS }}.txt -q -U pyproject.toml
+      - "{{.PY_VENV_EXE}} -m piptools compile -o requirements-{{OS}}-developer.txt -q -U --all-extras pyproject.toml"
+      - "{{.PY_VENV_EXE}} -m piptools compile -o requirements-{{OS}}.txt -q -U pyproject.toml"
 
   version:
     desc: Get current project version
     cmds:
-      - "echo {{ .PROJECT_VERSION }}"
+      - "echo {{.PROJECT_VERSION}}"
     vars:
       PROJECT_VERSION:
-        sh: python3 -m setuptools_scm
+        sh: "{{.PY_VENV_EXE}} -m setuptools_scm"

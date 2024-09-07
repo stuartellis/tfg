@@ -46,7 +46,7 @@ release = [
   "setuptools_scm~=8.1.0",
 ]
 
-reqs-utilities = [
+pip-tools = [
   "pip-tools~=7.4.0",
 ]
 
