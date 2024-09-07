@@ -33,9 +33,7 @@ This project includes a [Dev Container](https://code.visualstudio.com/docs/devco
 ### Setting Up The Project
 
 1. Ensure that you have the [required tools](#requirements).
-2. Create a Python virtual environment and activate it.
-3. Use the developer *requirements* file to add the dependencies to the Python virtual environment.
-4. Run the task in this project to set up the environment:
+2. Run the task in this project to set up the environment:
 
 ```shell
 task setup
@@ -112,11 +110,11 @@ task version
 
 To raise the version number for the project, add a Git tag that follows the format of [Semantic Versioning 2.0](https://semver.org/spec/v2.0.0.html).
 
-For example, to create version *0.3.0* with the comment *Release for 202407010931z*, run these commands:
+For example, to create tag *v0.3.0* with the comment *Release for 202407010931z*, run these commands:
 
 ```shell
 git checkout main
-git tag -am "Release for 202407010931z" 0.3.0
+git tag -am "Release for 202407010931z" v0.3.0
 git push --tags
 ```
 
