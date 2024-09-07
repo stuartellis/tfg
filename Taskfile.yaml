@@ -86,15 +86,10 @@ tasks:
     desc: Set up environment for development
     aliases: [bootstrap]
     cmds:
-      # Install pip-tools
-      - python3 -m pip install -q --disable-pip-version-check --require-virtualenv '.[reqs-utilities]'
-      # Install lint requirements
-      - python3 -m pip install -q --disable-pip-version-check --require-virtualenv '.[lint]'
-      # Install testing requirements
-      - python3 -m pip install -q --disable-pip-version-check --require-virtualenv '.[testing]'
-      # Install project in editable mode
-      - python3 -m pip install -q --disable-pip-version-check --require-virtualenv -e .
-      # Enable pre-commit
+      - python3 -m venv .venv
+      - .venv/bin/python3 -m pip install -q --disable-pip-version-check --require-virtualenv '.[reqs-utilities]'
+      - .venv/bin/python3 -m piptools sync -q requirements-linux-developer.txt
+      - .venv/bin/python3 -m pip install -q --disable-pip-version-check --require-virtualenv -e .
       - pre-commit install
 
   test:
