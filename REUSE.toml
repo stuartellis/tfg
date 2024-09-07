@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
 #
-# SPDX-License-Identifier: CC0-1.0
+# SPDX-License-Identifier: MIT
 #
 # Configuration for REUSE:
 #
@@ -15,16 +15,16 @@ SPDX-PackageDownloadLocation = "https://github.com/stuartellis/tfg"
 path = "**.json"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "Stuart Ellis"
-SPDX-License-Identifier = "CC0-1.0"
+SPDX-License-Identifier = "MIT"
 
 [[annotations]]
 path = "requirements**.txt"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "Stuart Ellis"
-SPDX-License-Identifier = "CC0-1.0"
+SPDX-License-Identifier = "MIT"
 
 [[annotations]]
 path = ".*-version"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "Stuart Ellis"
-SPDX-License-Identifier = "CC0-1.0"
+SPDX-License-Identifier = "MIT"
