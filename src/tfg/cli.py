@@ -142,8 +142,8 @@ def run(options: dict[str, Any]) -> None:
         sys.exit(1)
     else:
         env_config = build_env_config()
-        context = load_json(Path(settings["tf_context_json"]))
-        cmd_settings = settings.tf_settings(env_config, context, config.TF_EXES)
+        tf_context = load_json(Path(settings["tf_tf_context_json"]))
+        cmd_settings = settings.tf_settings(env_config, tf_context, config.TF_EXES)
 
         if options["debug"]:
             print_debug_info(options, cmd_settings)

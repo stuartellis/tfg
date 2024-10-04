@@ -8,8 +8,6 @@ Tests for the command-line module for the TFG application.
 This module provides test for the command-line tool.
 """
 
-import tfg
-
 
 def test_canary() -> None:
     """

@@ -7,18 +7,9 @@ SPDX-License-Identifier: MIT
 
 """
 
-# Disable check for line-length
-# ruff: noqa: E501
-
-import argparse
-import json
-import subprocess
-import sys
-from importlib.metadata import version
-from os import environ, pathsep
+from os import pathsep
 from pathlib import Path
 from shutil import which
-from string import Template
 from typing import Any
 
 
@@ -41,7 +32,7 @@ def build_path_set(root_dir: Path, environment: str, stack: str) -> dict[str, Pa
         "tf_def_dir": tf_root_dir.joinpath("definitions", stack).absolute(),
         "tf_envs_dir": tf_root_dir.joinpath("environments").absolute(),
         "tf_env_dir": tf_root_dir.joinpath("environments", environment).absolute(),
-        "tf_context_json": tf_root_dir.joinpath(
+        "tf_tf_context_json": tf_root_dir.joinpath(
             "environments", environment, "backend.json"
         ).absolute(),
         "tf_modules_dir": tf_root_dir.joinpath("modules").absolute(),
@@ -64,7 +55,7 @@ def build_tf_plan_name(config: dict[str, str]) -> str:
 
 def build_tf_vars_files_opt(config: dict[str, str]) -> str:
     """Return var files for TF."""
-    return f"-var-file={config['tf_envs_dir']}/all/{config['stack_name']}.tfvars -var-file={config['tf_env_dir']}/{config['stack_name']}.tfvars"
+    return f"-var-file={config['tf_envs_dir']}/all/{config['stack_name']}.tfvars -var-file={config['tf_env_dir']}/{config['stack_name']}.tfvars"  # noqa: E501
 
 
 def build_tf_vars_extras_opt(config: dict[str, str]) -> str:
@@ -88,7 +79,11 @@ def tf_backend_type() -> str:
     return "aws"
 
 
-def tf_settings(env_config: dict[str, str], context: Any, tf_exes: list[str]) -> dict[str, str]:
+def tf_settings(
+    env_config: dict[str, str],
+    tf_context: Any,  # noqa: ANN401
+    tf_exes: list[str],
+) -> dict[str, str]:
     """Return settings for TF commands."""
     settings = env_config.copy()
     settings["tf_exe"] = tf_exe(tf_exes)
@@ -102,7 +97,7 @@ def tf_settings(env_config: dict[str, str], context: Any, tf_exes: list[str]) ->
     if tf_remote_backend_required(env_config):
         backend_type = tf_backend_type()
         settings["tf_backend_opts"] = build_tf_remote_backend_opts(
-            context, backend_type
+            tf_context, backend_type
         )
     else:
         settings["tf_backend_opts"] = "-backend=false"
@@ -116,5 +111,5 @@ def tf_exe(tf_names: list[str]) -> str:
         if which(tf_name):
             return tf_name
 
-    err = f"No TF executable found. Ensure that PATH has one of these: {', '.join(tf_names)}."
+    err = f"No TF executable found. Ensure that PATH has one of these: {', '.join(tf_names)}."  # noqa: E501
     raise FileNotFoundError(err)
