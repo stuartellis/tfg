@@ -22,15 +22,16 @@ from pathlib import Path
 from string import Template
 from typing import Any
 
-import config
 import settings
+
+from tfg import constants
 
 
 def cli() -> None:
     """Run with command-line options."""
     version_id = get_version()
     parser = build_arg_parser(
-        version=version_id, subcommands=[*config.TEMPLATE_SUB_COMMANDS]
+        version=version_id, subcommands=[*constants.TEMPLATE_SUB_COMMANDS]
     )
     opts = vars(parser.parse_args())
     run(opts)
@@ -67,8 +68,8 @@ def build_arg_parser(version: str, subcommands: list[str]) -> argparse.ArgumentP
 
 def build_env_config() -> dict[Any, Any]:
     """Build the full configuration object."""
-    env_vars = get_env_vars(config.REQUIRED_VARS, config.OPTIONAL_VARS)
-    missing_vars = check_env_vars(env_vars, config.REQUIRED_VARS)
+    env_vars = get_env_vars(constants.REQUIRED_VARS, constants.OPTIONAL_VARS)
+    missing_vars = check_env_vars(env_vars, constants.REQUIRED_VARS)
     if len(missing_vars) > 0:
         print(f"Missing required variables: {', '.join(missing_vars)}")
         sys.exit(1)
@@ -112,7 +113,7 @@ def info() -> dict[str, str]:
 
     return {
         "python_version": ".".join([str(v) for v in python_version]),
-        "tf_exe": settings.tf_exe(config.TF_EXES),
+        "tf_exe": settings.tf_exe(constants.TF_EXES),
         "tfg_version": get_version(),
     }
 
@@ -143,13 +144,13 @@ def run(options: dict[str, Any]) -> None:
     else:
         env_config = build_env_config()
         tf_context = load_json(Path(settings["tf_tf_context_json"]))
-        cmd_settings = settings.tf_settings(env_config, tf_context, config.TF_EXES)
+        cmd_settings = settings.tf_settings(env_config, tf_context, constants.TF_EXES)
 
         if options["debug"]:
             print_debug_info(options, cmd_settings)
 
-        if options["subcommand"] in config.TEMPLATE_SUB_COMMANDS:
-            template = config.TEMPLATE_SUB_COMMANDS[options["subcommand"]]
+        if options["subcommand"] in constants.TEMPLATE_SUB_COMMANDS:
+            template = constants.TEMPLATE_SUB_COMMANDS[options["subcommand"]]
             cmd = render_cmd_string(cmd_settings, template)
 
             if options["print"]:
