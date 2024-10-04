@@ -23,7 +23,7 @@ from string import Template
 from typing import Any
 
 import config
-import context
+import settings
 
 
 def cli() -> None:
@@ -47,7 +47,7 @@ def build_arg_parser(version: str, subcommands: list[str]) -> argparse.ArgumentP
         help=f"subcommand to run: {subcommands}",
     )
     parser.add_argument(
-        "-d", "--debug", help="output the generated context", action="store_true"
+        "-d", "--debug", help="output the generated settings", action="store_true"
     )
     parser.add_argument(
         "-p",
@@ -65,7 +65,7 @@ def build_arg_parser(version: str, subcommands: list[str]) -> argparse.ArgumentP
     return parser
 
 
-def build_config() -> dict[Any, Any]:
+def build_env_config() -> dict[Any, Any]:
     """Build the full configuration object."""
     env_vars = get_env_vars(config.REQUIRED_VARS, config.OPTIONAL_VARS)
     missing_vars = check_env_vars(env_vars, config.REQUIRED_VARS)
@@ -74,11 +74,11 @@ def build_config() -> dict[Any, Any]:
         sys.exit(1)
 
     project_root_dir = Path.cwd()
-    path_set = context.build_path_set(
+    path_set = settings.build_path_set(
         project_root_dir, env_vars["ENVIRONMENT"], env_vars["STACK_NAME"]
     )
 
-    config_dict = context.build_config_dict(env_vars, path_set)
+    config_dict = settings.build_env_config_dict(env_vars, path_set)
 
     if "variant" not in config_dict:
         config_dict["variant"] = "default"
@@ -112,7 +112,7 @@ def info() -> dict[str, str]:
 
     return {
         "python_version": ".".join([str(v) for v in python_version]),
-        "tf_exe": context.tf_exe(config.TF_EXES),
+        "tf_exe": settings.tf_exe(config.TF_EXES),
         "tfg_version": get_version(),
     }
 
@@ -123,16 +123,16 @@ def load_json(file_path: Path) -> Any:  # noqa: ANN401
         return json.load(f_in)
 
 
-def print_debug_info(options: dict[str, Any], context: dict[str, Any]) -> None:
+def print_debug_info(options: dict[str, Any], settings: dict[str, Any]) -> None:
     """Output debug info."""
     print(f"Options: {options}")
     print(f"Environment: {info()}")
-    print(f"Context: {context}")
+    print(f"Bundle: {settings}")
 
 
-def render_cmd_string(context: dict[str, Any], template: str) -> str:
+def render_cmd_string(settings: dict[str, Any], template: str) -> str:
     """Return string for command."""
-    return Template(template).substitute(context)
+    return Template(template).substitute(settings)
 
 
 def run(options: dict[str, Any]) -> None:
@@ -141,15 +141,16 @@ def run(options: dict[str, Any]) -> None:
         sys.stderr.write("Arguments are required")
         sys.exit(1)
     else:
-        payload = build_config()
-        cmd_context = context.tf_context(payload, config.TF_EXES)
+        env_config = build_env_config()
+        context = load_json(Path(settings["tf_context_json"]))
+        cmd_settings = settings.tf_settings(env_config, context, config.TF_EXES)
 
         if options["debug"]:
-            print_debug_info(options, cmd_context)
+            print_debug_info(options, cmd_settings)
 
         if options["subcommand"] in config.TEMPLATE_SUB_COMMANDS:
             template = config.TEMPLATE_SUB_COMMANDS[options["subcommand"]]
-            cmd = render_cmd_string(cmd_context, template)
+            cmd = render_cmd_string(cmd_settings, template)
 
             if options["print"]:
                 print(cmd)

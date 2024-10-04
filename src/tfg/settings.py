@@ -1,7 +1,5 @@
-#!/usr/bin/env python3
-
 """
-Context functions for tfg.
+Bundle functions for tfg.
 
 SPDX-FileCopyrightText: 2024-present Stuart Ellis <stuart@stuartellis.name>
 
@@ -43,7 +41,7 @@ def build_path_set(root_dir: Path, environment: str, stack: str) -> dict[str, Pa
         "tf_def_dir": tf_root_dir.joinpath("definitions", stack).absolute(),
         "tf_envs_dir": tf_root_dir.joinpath("environments").absolute(),
         "tf_env_dir": tf_root_dir.joinpath("environments", environment).absolute(),
-        "tf_backend_json": tf_root_dir.joinpath(
+        "tf_context_json": tf_root_dir.joinpath(
             "environments", environment, "backend.json"
         ).absolute(),
         "tf_modules_dir": tf_root_dir.joinpath("modules").absolute(),
@@ -90,27 +88,26 @@ def tf_backend_type() -> str:
     return "aws"
 
 
-def tf_context(config: dict[str, str], tf_exes: list[str]) -> dict[str, str]:
-    """Return context for TF commands."""
-    context = config.copy()
-    context["tf_exe"] = tf_exe(tf_exes)
+def tf_settings(env_config: dict[str, str], context: Any, tf_exes: list[str]) -> dict[str, str]:
+    """Return settings for TF commands."""
+    settings = env_config.copy()
+    settings["tf_exe"] = tf_exe(tf_exes)
 
-    context["tf_plan_path"] = pathsep.join(
-        [config["tf_tmp_dir"], build_tf_plan_name(context)]
+    settings["tf_plan_path"] = pathsep.join(
+        [env_config["tf_tmp_dir"], build_tf_plan_name(settings)]
     )
-    context["tf_vars_files_opt"] = build_tf_vars_files_opt(config)
-    context["tf_vars_opt"] = build_tf_vars_extras_opt(config)
+    settings["tf_vars_files_opt"] = build_tf_vars_files_opt(env_config)
+    settings["tf_vars_opt"] = build_tf_vars_extras_opt(env_config)
 
-    if tf_remote_backend_required(config):
+    if tf_remote_backend_required(env_config):
         backend_type = tf_backend_type()
-        tf_backend_document = load_json(Path(context["tf_backend_json"]))
-        context["tf_backend_opts"] = build_tf_remote_backend_opts(
-            tf_backend_document, backend_type
+        settings["tf_backend_opts"] = build_tf_remote_backend_opts(
+            context, backend_type
         )
     else:
-        context["tf_backend_opts"] = "-backend=false"
+        settings["tf_backend_opts"] = "-backend=false"
 
-    return context
+    return settings
 
 
 def tf_exe(tf_names: list[str]) -> str:
