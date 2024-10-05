@@ -22,9 +22,7 @@ from pathlib import Path
 from string import Template
 from typing import Any
 
-import settings
-
-from tfg import constants
+from tfg import constants, settings
 
 
 def cli() -> None:
@@ -79,7 +77,7 @@ def build_env_config() -> dict[Any, Any]:
         project_root_dir, env_vars["ENVIRONMENT"], env_vars["STACK_NAME"]
     )
 
-    config_dict = settings.build_env_config_dict(env_vars, path_set)
+    config_dict = settings.build_config_dict(env_vars, path_set)
 
     if "variant" not in config_dict:
         config_dict["variant"] = "default"
@@ -143,7 +141,7 @@ def run(options: dict[str, Any]) -> None:
         sys.exit(1)
     else:
         env_config = build_env_config()
-        tf_context = load_json(Path(settings["tf_tf_context_json"]))
+        tf_context = load_json(Path(env_config["tf_tf_context_json"]))
         cmd_settings = settings.tf_settings(env_config, tf_context, constants.TF_EXES)
 
         if options["debug"]:
