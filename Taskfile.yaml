@@ -95,11 +95,10 @@ tasks:
       - pre-commit install
 
   test:
-    desc: Run tests
+    desc: Run all linting and tests
     cmds:
       - task: lint
-      - "{{.PY_VENV_EXE}} -m mypy . --exclude bin --ignore-missing-imports"
-      - "{{.PY_VENV_EXE}} -m pytest"
+      - task: py:unit
 
   upgrade:
     desc: Upgrade requirements files
@@ -114,3 +113,25 @@ tasks:
     vars:
       PROJECT_VERSION:
         sh: "{{.PY_VENV_EXE}} -m setuptools_scm"
+
+  py:lint:
+    desc: Run Python checks
+    cmds:
+      - for:
+          [
+            "ruff",
+            "ruff-format",
+            "mypy",
+          ]
+        cmd: pre-commit run {{.ITEM}} --all-files
+
+  py:test:
+    desc: Run all Python linting and tests
+    cmds:
+      - task: py:lint
+      - task: py:unit
+
+  py:unit:
+    desc: Run Python unit tests
+    cmds:
+      - "{{.PY_VENV_EXE}} -m pytest"
