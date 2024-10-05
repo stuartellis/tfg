@@ -25,14 +25,14 @@ from typing import Any
 from tfg import constants, settings
 
 
-def cli() -> None:
+def cli(argv: list[str] | None = None) -> int:
     """Run with command-line options."""
     version_id = get_version()
     parser = build_arg_parser(
         version=version_id, subcommands=[*constants.TEMPLATE_SUB_COMMANDS]
     )
-    opts = vars(parser.parse_args())
-    run(opts)
+    opts = vars(parser.parse_args(argv))
+    return run(opts)
 
 
 def build_arg_parser(version: str, subcommands: list[str]) -> argparse.ArgumentParser:
@@ -134,12 +134,9 @@ def render_cmd_string(settings: dict[str, Any], template: str) -> str:
     return Template(template).substitute(settings)
 
 
-def run(options: dict[str, Any]) -> None:
+def run(options: dict[str, Any]) -> int:
     """Run."""
-    if not options["subcommand"]:
-        sys.stderr.write("Arguments are required")
-        sys.exit(1)
-    else:
+    if options["subcommand"]:
         env_config = build_env_config()
         tf_context = load_json(Path(env_config["tf_tf_context_json"]))
         cmd_settings = settings.tf_settings(env_config, tf_context, constants.TF_EXES)
@@ -165,6 +162,10 @@ def run(options: dict[str, Any]) -> None:
                         f"Process failed because did not return a successful return code. "
                         f"Returned {exc.returncode}\n{exc}"
                     )
+        return 0
+
+    sys.stderr.write("Arguments are required")
+    return 1
 
 
 def get_version() -> str:
@@ -174,4 +175,4 @@ def get_version() -> str:
 
 """Run the main() function when this file is executed"""
 if __name__ == "__main__":
-    cli()
+    sys.exit(cli())
